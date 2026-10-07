@@ -11,7 +11,7 @@ export default function BoardingPassCTA() {
         <Reveal>
           <div className="relative mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-gold/30 bg-surface shadow-[var(--shadow)] md:grid-cols-[1fr_auto_300px]">
             <div className="p-6 sm:p-10">
-              <p className="eyebrow">Boarding Pass · Ivaanescapes Air</p>
+              <p className="eyebrow">Boarding Pass · Ivaan Escapes Air</p>
               <div className="mt-6 flex items-center gap-4 sm:gap-8">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-muted">From</p>

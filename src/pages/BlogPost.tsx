@@ -14,7 +14,7 @@ export default function BlogPost() {
   const { scrollYProgress } = useScroll()
 
   useEffect(() => {
-    if (b) document.title = `${b.title} — Ivaanescapes`
+    if (b) document.title = `${b.title} — Ivaan Escapes`
   }, [b])
 
   if (!b) return <Navigate to="/blog" replace />

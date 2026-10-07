@@ -25,7 +25,7 @@ function PackageDetail({ slug }: { slug: string }) {
   const heroY = useTransform(scrollY, [0, 600], [0, 150])
 
   useEffect(() => {
-    if (p) document.title = `${p.title} · ${p.nights}N/${p.days}D — Ivaanescapes`
+    if (p) document.title = `${p.title} · ${p.nights}N/${p.days}D — Ivaan Escapes`
   }, [p])
 
   useScrollLock(sheet || !!lightbox)

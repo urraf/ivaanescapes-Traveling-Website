@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { createBrowserRouter, Link, Outlet, ScrollRestoration, useNavigation, useRouteError, type LazyRouteFunction, type RouteObject } from 'react-router-dom'
+import { createBrowserRouter, Link, Navigate, Outlet, ScrollRestoration, useNavigation, useRouteError, type LazyRouteFunction, type RouteObject } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -98,7 +98,8 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: 'packages', lazy: page(() => import('./pages/Packages')) },
       { path: 'packages/:slug', lazy: page(() => import('./pages/PackageDetail')) },
-      { path: 'stays', lazy: page(() => import('./pages/Stays')) },
+      { path: 'hotels', lazy: page(() => import('./pages/Hotels')) },
+      { path: 'stays', element: <Navigate to="/hotels" replace /> },
       { path: 'partners', lazy: page(() => import('./pages/Partners')) },
       { path: 'reviews', lazy: page(() => import('./pages/Reviews')) },
       { path: 'blog', lazy: page(() => import('./pages/Blog')) },

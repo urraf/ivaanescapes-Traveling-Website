@@ -7,7 +7,7 @@ import { PageHero, Reveal, SectionHeading, Stars, WhatsAppIcon } from '../compon
 
 const BENEFITS = [
   { icon: BadgePercent, title: 'Exclusive net rates', text: 'Contracted hotel and transport rates that leave you healthy margins on every booking.' },
-  { icon: FileText, title: 'White-label itineraries', text: 'Beautiful, ready-to-send itineraries with your agency branding — no Ivaanescapes logo.' },
+  { icon: FileText, title: 'White-label itineraries', text: 'Beautiful, ready-to-send itineraries with your agency branding — no Ivaan Escapes logo.' },
   { icon: Clock4, title: 'Quotes in under 2 hours', text: 'Send an enquiry on WhatsApp and get a detailed costing fast, even for groups.' },
   { icon: Headset, title: 'Dedicated ops manager', text: 'One point of contact and 24×7 on-ground support for your travellers.' },
   { icon: Layers, title: 'Group & MICE handling', text: 'Corporate offsites, school groups and weddings managed end to end.' },
@@ -26,13 +26,13 @@ export default function Partners() {
   const partners = REVIEWS.filter((r) => r.kind === 'partner')
 
   useEffect(() => {
-    document.title = 'Partner With Us (B2B) — Ivaanescapes'
+    document.title = 'Partner With Us (B2B) — Ivaan Escapes'
   }, [])
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     const msg = [
-      'Hello Ivaanescapes! 🤝 I would like to become a B2B travel partner.',
+      'Hello Ivaan Escapes! 🤝 I would like to become a B2B travel partner.',
       '',
       `🏢 Agency: ${f.agency}`,
       `🙋 Contact person: ${f.name}`,
@@ -55,7 +55,7 @@ export default function Partners() {
         eyebrow="B2B Partnerships"
         title="Your trusted"
         accent="travel back-office"
-        text="Ivaanescapes powers travel agents across India with net rates, ready itineraries and reliable on-ground operations for 12 of the most-loved destinations."
+        text="A trusted destination management company for 1500+ travel agents — exclusive hotel rates, ready itineraries and reliable on-ground operations across India. Let the client enjoy the vacation, you enjoy the margin."
         image="photo-1603202662747-00e33e7d1468"
       >
         <div className="mt-8 flex flex-wrap gap-3">
@@ -69,7 +69,7 @@ export default function Partners() {
           >
             Register as a Partner
           </a>
-          <a href={waLink("Hello Ivaanescapes! I'm a travel agent and would like your B2B rate sheet.")} target="_blank" rel="noopener" className="btn-wa">
+          <a href={waLink("Hello Ivaan Escapes! I'm a travel agent and would like your B2B rate sheet.")} target="_blank" rel="noopener" className="btn-wa">
             <WhatsAppIcon className="h-4 w-4" /> Get Rate Sheet
           </a>
         </div>
@@ -93,7 +93,7 @@ export default function Partners() {
 
       <section className="bg-bg-2 py-24 sm:py-28">
         <div className="container-x">
-          <SectionHeading eyebrow="Destinations we operate" title="Sell with" accent="confidence" text="Strong on-ground operations across India's favourite holiday destinations — plus the Maldives and Bali." />
+          <SectionHeading eyebrow="Destinations we operate" title="Sell with" accent="confidence" text="Special exclusive deals in Goa & Uttarakhand, best deals in Kashmir, Rajasthan, Mumbai & Kerala — and chain hotels across the rest of India. Hotels, transfers, sightseeing, activities and customised packages." />
           <div className="mt-10 flex flex-wrap gap-3">
             {DESTINATIONS.map((d) => (
               <span key={d.slug} className="flex items-center gap-2 rounded-full border border-line bg-surface py-1.5 pl-1.5 pr-4 text-sm font-semibold">

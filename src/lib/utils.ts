@@ -35,7 +35,7 @@ export const session = {
 export const cn = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ')
 
 export const GENERAL_WA = waLink(
-  "Hello Ivaanescapes! ✈️ I'm planning a trip and would love some help choosing a package.",
+  "Hello Ivaan Escapes! ✈️ I'm planning a trip and would love some help choosing a package.",
 )
 
 /** Today's date as YYYY-MM-DD in the visitor's own timezone (toISOString() would give the UTC date). */

@@ -14,8 +14,8 @@ type Msg = { role: 'user' | 'assistant'; content: string }
 const SUGGESTIONS = [
   'Best honeymoon package?',
   'Mountain trip under ₹25,000',
-  'Kashmir vs Ladakh — which is better in May?',
-  'I am a travel agent, how do I partner?',
+  'Do you have 5-star hotels in Goa?',
+  'I am a travel agent — how do I partner?',
 ]
 
 const WELCOME: Msg = {
@@ -32,6 +32,8 @@ function offlineReply(q: string): string {
   if (!picks.length && /honeymoon|couple/.test(t)) picks = PACKAGES.filter((p) => p.themes.includes('Honeymoon')).slice(0, 4)
   if (!picks.length && /agent|partner|b2b|commission/.test(t))
     return 'We would love to work with you! See our partner benefits at [Partner With Us](/partners), or message us on WhatsApp for net rates.'
+  if (!picks.length && /hotel|resort|stay|room|taj|marriott|hilton|hyatt|lemon tree|itc|oberoi/.test(t))
+    return 'We have exclusive B2B rates on 290+ hotels in Goa, Rajasthan and Maharashtra, plus chain hotels across India. Browse them at [B2B Hotel Deals](/hotels) and tap any hotel to get its best rate on WhatsApp.'
   if (!picks.length) picks = PACKAGES.filter((p) => p.popular).slice(0, 4)
   const list = picks.map((p) => `- [${p.title}](/packages/${p.slug}) — ${p.nights}N/${p.days}D from ${inr(p.priceFrom)}`).join('\n')
   return `Here are some journeys you might love:\n${list}\n\nFor a personalised quote, tap **WhatsApp** above and our experts will reply right away.`

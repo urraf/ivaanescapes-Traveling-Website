@@ -17,9 +17,13 @@ import {
   Settings2,
   Sparkles,
   Users,
+  Presentation,
+  Briefcase,
+  PartyPopper,
 } from 'lucide-react'
 import { DESTINATIONS, GROUPS, getDestination, type Group } from '../data/destinations'
-import { PACKAGES, packagesFor, type Theme } from '../data/packages'
+import { PACKAGES, destInfo, packagesFor, type Theme } from '../data/packages'
+import { CHAIN_PARTNERS, LEMON_TREE } from '../data/hotels'
 import { REVIEWS } from '../data/reviews'
 import { BLOGS } from '../data/blogs'
 import { useUI } from '../context/ui'
@@ -28,7 +32,7 @@ import PackageCard from '../components/PackageCard'
 import BoardingPassCTA from '../components/BoardingPassCTA'
 import { Img, Reveal, SectionHeading, Stars, WhatsAppIcon } from '../components/ui'
 
-const HERO_SLIDES = ['ladakh', 'maldives', 'kerala', 'kashmir', 'bali'].map((s) => getDestination(s)!)
+const HERO_SLIDES = ['ladakh', 'kashmir', 'kerala', 'goa', 'rajasthan'].map((s) => getDestination(s)!)
 
 /* ---------------- Hero ---------------- */
 function Hero() {
@@ -114,7 +118,7 @@ function Hero() {
         </h1>
 
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 0.8 }} className="mt-6 max-w-lg text-base leading-relaxed text-ivory/80 sm:text-lg">
-          Handcrafted journeys to the Himalayas, Kerala's backwaters, Goa's beaches, the Maldives and Bali — planned by experts, confirmed in one WhatsApp message.
+          Handcrafted India holidays — Kashmir, Ladakh, Himachal, Uttarakhand, Goa, Rajasthan, Mumbai and Kerala — with exclusive hotel deals, planned by experts and confirmed in one WhatsApp message.
         </motion.p>
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.8 }} className="mt-8 flex flex-wrap gap-3">
@@ -157,7 +161,7 @@ function Hero() {
             )}
           </button>
         ))}
-        <span className="ml-3 font-cinzel text-[0.65rem] tracking-[0.3em] text-ivory/70 lg:hidden">{slide.name.toUpperCase()}</span>
+        <span className="ml-3 hidden whitespace-nowrap font-cinzel text-[0.65rem] tracking-[0.3em] text-ivory/70 min-[380px]:inline lg:hidden">{slide.name.toUpperCase()}</span>
       </div>
     </section>
   )
@@ -278,7 +282,7 @@ function Destinations() {
   return (
     <section className="py-24 sm:py-32">
       <div className="container-x flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-        <SectionHeading eyebrow="Destinations" title="Where will your" accent="story begin?" text="Twelve extraordinary places, each with one perfectly planned signature journey. No clutter — just pick the place that calls you." />
+        <SectionHeading eyebrow="Destinations" title="Where will your" accent="story begin?" text="Eight of India's most-loved regions, each with perfectly planned journeys. No clutter — just pick the place that calls you." />
         <div className="flex items-center gap-2">
           <button onClick={() => scroll(-1)} aria-label="Scroll left" className="grid h-12 w-12 place-items-center rounded-full border border-line transition-colors hover:border-gold hover:text-gold">
             <ChevronLeft className="h-5 w-5" />
@@ -310,7 +314,7 @@ function Destinations() {
       <div ref={rail} className="no-scrollbar mt-8 flex snap-x snap-mandatory scroll-px-[max(1rem,calc((100vw-1280px)/2+2rem))] gap-5 overflow-x-auto scroll-smooth px-[max(1rem,calc((100vw-1280px)/2+2rem))] pb-4">
         <AnimatePresence mode="popLayout">
           {list.map((d, k) => {
-            const p = packagesFor(d.slug)[0]
+            const info = destInfo(d.slug)
             return (
               <motion.div
                 layout
@@ -320,7 +324,7 @@ function Destinations() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 className="w-[78vw] shrink-0 snap-start sm:w-[320px]"
               >
-                <Link to={p ? `/packages/${p.slug}` : '/packages'} className="group relative block aspect-[3/4] overflow-hidden rounded-[1.75rem] text-ivory">
+                <Link to={info.link} className="group relative block aspect-[3/4] overflow-hidden rounded-[1.75rem] text-ivory">
                   <Img id={d.image} alt={`${d.name} — ${d.tagline}`} w={700} sizes="(max-width: 640px) 78vw, 320px" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.4s] ease-out group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/20 to-transparent opacity-90" />
                   <div className="absolute inset-3 rounded-[1.35rem] border border-ivory/20 transition-colors duration-500 group-hover:border-gold-soft/60" />
@@ -328,10 +332,10 @@ function Destinations() {
                   <div className="absolute inset-x-6 bottom-6">
                     <p className="font-script text-2xl text-gold-soft">{d.tagline}</p>
                     <p className="font-display text-4xl font-semibold leading-none">{d.name}</p>
-                    {p && (
+                    {info.count > 0 && (
                       <div className="mt-4 flex items-center justify-between border-t border-ivory/20 pt-3 text-sm">
                         <span className="text-ivory/80">
-                          {p.nights}N/{p.days}D · from <b className="text-ivory">{inr(p.priceFrom)}</b>
+                          {info.label} · from <b className="text-ivory">{inr(info.from)}</b>
                         </span>
                         <span className="grid h-9 w-9 place-items-center rounded-full bg-ivory/15 transition-all duration-500 group-hover:bg-gold group-hover:text-navy">
                           <ArrowRight className="h-4 w-4" />
@@ -371,12 +375,90 @@ function Featured() {
   )
 }
 
+/* ---------------- B2B hotel deals (from the "6 Destinations · 1 Solution" flyer) ---------------- */
+const DEAL_DESTINATIONS = [
+  { name: 'Goa', image: 'photo-1614082242765-7c98ca0f3df3', tag: 'Special exclusive deal', to: '/hotels' },
+  { name: 'Uttarakhand', image: 'photo-1719581827279-e9a8d8fce924', tag: 'Special exclusive deal', to: '/packages?dest=uttarakhand' },
+  { name: 'Kashmir', image: 'photo-1564327287902-0ccf559d839e', tag: 'Best deal', to: '/packages/kashmir-paradise-on-earth' },
+  { name: 'Rajasthan', image: 'photo-1599661046827-dacff0c0f09a', tag: 'Best deal', to: '/hotels?region=rajasthan' },
+  { name: 'Mumbai', image: 'photo-1598434192043-71111c1b3f41', tag: 'Best deal', to: '/hotels?region=maharashtra' },
+  { name: 'Kerala', image: 'photo-1506461883276-594a12b11cf3', tag: 'Best deal', to: '/packages/kerala-backwaters-and-hills' },
+]
+
+function HotelDeals() {
+  return (
+    <section className="py-24 sm:py-32">
+      <div className="container-x">
+        <SectionHeading center eyebrow="B2B Hotel Deals" title="6 destinations," accent="1 solution" text="Special exclusive deals in Goa & Uttarakhand, best deals in Kashmir, Rajasthan, Mumbai & Kerala — and chain hotels across the rest of India." />
+        <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
+          {DEAL_DESTINATIONS.map((d, k) => (
+            <Reveal key={d.name} delay={k * 0.06}>
+              <Link to={d.to} className="group relative block aspect-[3/4] overflow-hidden rounded-3xl text-ivory">
+                <Img id={d.image} alt={d.name} w={500} sizes="(max-width:768px) 50vw, 16vw" className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/10 to-transparent" />
+                <span className={cn('absolute left-3 top-3 rounded-full px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-wide', k < 2 ? 'bg-gilded text-navy' : 'bg-navy/75 text-ivory backdrop-blur')}>{d.tag}</span>
+                <p className="absolute inset-x-4 bottom-4 font-display text-2xl font-semibold leading-none sm:text-3xl">{d.name}</p>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal className="mt-14">
+          <p className="text-center text-xs font-bold uppercase tracking-[0.25em] text-muted">Rest of India — we have chain hotels</p>
+          <div className="mt-5 flex overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_8%,#000_92%,transparent)]">
+            <div className="marquee flex w-max items-center gap-10">
+              {[...CHAIN_PARTNERS, ...CHAIN_PARTNERS].map((c, k) => (
+                <span key={k} className={cn('whitespace-nowrap text-xl text-ink/70', k % 3 === 0 ? 'font-cinzel tracking-widest' : k % 3 === 1 ? 'font-display italic text-2xl' : 'font-sans font-extrabold tracking-tight')}>
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="mt-14 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+          <Reveal className="rounded-3xl border border-line bg-surface p-6 sm:p-8">
+            <p className="eyebrow">Specialising in</p>
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {[
+                { icon: Users, t: 'Family Groups' },
+                { icon: Presentation, t: 'MICE' },
+                { icon: Briefcase, t: 'Corporate' },
+                { icon: PartyPopper, t: 'Marriage Functions' },
+              ].map((x) => (
+                <div key={x.t} className="rounded-2xl bg-bg-2 p-4 text-center">
+                  <x.icon className="mx-auto h-7 w-7 text-gold" />
+                  <p className="mt-2 text-sm font-semibold">{x.t}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+          <Reveal delay={0.1} className="grain relative flex flex-col justify-center overflow-hidden rounded-3xl bg-navy p-6 text-ivory sm:p-8">
+            <p className="font-display text-3xl font-semibold leading-tight">
+              Try our rates <em className="text-gilded">before booking anywhere</em>
+            </p>
+            <p className="mt-2 text-sm text-ivory/70">Pre-purchased & exclusive B2B hotel rates · instant confirmation · 24 × 7.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link to="/hotels" className="btn-gold !py-2.5">
+                View hotel deals <ArrowRight className="h-4 w-4" />
+              </Link>
+              <a href={waLink("Hello Ivaan Escapes! Please share your best hotel rates.")} target="_blank" rel="noopener" className="btn-wa !py-2.5">
+                <WhatsAppIcon className="h-4 w-4" /> Get rates
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 /* ---------------- How it works ---------------- */
 function HowItWorks() {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] })
   const steps = [
-    { icon: Compass, title: 'Pick your package', text: 'Browse 12 signature journeys or ask our AI concierge for a recommendation.' },
+    { icon: Compass, title: 'Pick your package', text: `Browse ${PACKAGES.length} signature India journeys or ask our AI concierge for a recommendation.` },
     { icon: Settings2, title: 'Personalise it', text: 'Choose your dates, travellers and hotel category — see your estimate instantly.' },
     { icon: WhatsAppIcon, title: 'Confirm on WhatsApp', text: 'One tap sends your trip details to our experts. We confirm and you pack your bags.' },
   ]
@@ -415,7 +497,7 @@ function QuoteBanner() {
   return (
     <section ref={ref} className="grain relative isolate overflow-hidden py-32 text-ivory sm:py-44">
       <motion.div style={{ y }} className="absolute -inset-y-[20%] inset-x-0 -z-10">
-        <Img id="photo-1688949078626-a358f500e063" alt="" sizes="100vw" w={1800} className="h-full w-full object-cover" />
+        <Img id="photo-1683700914015-92be0e442390" alt="" sizes="100vw" w={1800} className="h-full w-full object-cover" />
       </motion.div>
       <div className="absolute inset-0 -z-10 bg-navy/60" />
       <div className="container-x text-center">
@@ -445,10 +527,10 @@ function WhyUs() {
         <div className="relative">
           <div className="grid grid-cols-2 gap-4">
             <Reveal className="mt-12 overflow-hidden rounded-[2rem]">
-              <Img id="photo-1625654325562-762dcec9e6f2" alt="Living root bridge in Meghalaya" w={700} sizes="(max-width:1024px) 50vw, 25vw" className="aspect-[3/4] w-full object-cover" />
+              <Img id="photo-1633702738734-443da2c18f3c" alt="Lake Palace, Udaipur" w={700} sizes="(max-width:1024px) 50vw, 25vw" className="aspect-[3/4] w-full object-cover" />
             </Reveal>
             <Reveal delay={0.15} className="overflow-hidden rounded-[2rem]">
-              <Img id="photo-1576475706812-822620fc23ba" alt="Jungle swing in Bali" w={700} sizes="(max-width:1024px) 50vw, 25vw" className="aspect-[3/4] w-full object-cover" />
+              <Img id="photo-1624554305378-0f440dd3a8c1" alt="Houseboat at sunset, Kerala" w={700} sizes="(max-width:1024px) 50vw, 25vw" className="aspect-[3/4] w-full object-cover" />
             </Reveal>
           </div>
           {/* Rotating badge */}
@@ -458,7 +540,7 @@ function WhyUs() {
                 <path id="circle" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
               </defs>
               <text className="fill-[#f1d27a] font-cinzel text-[15px] tracking-[0.28em]">
-                <textPath href="#circle">ESCAPE THE ORDINARY ✦ IVAANESCAPES ✦</textPath>
+                <textPath href="#circle">ESCAPE THE ORDINARY ✦ IVAAN ESCAPES ✦</textPath>
               </text>
             </svg>
             <img src="/logo-mark.webp" alt="" className="h-12 w-auto" />
@@ -466,7 +548,7 @@ function WhyUs() {
         </div>
 
         <div>
-          <SectionHeading eyebrow="Why Ivaanescapes" title="Travel that feels" accent="effortless" text="We are a B2B travel company at heart — trusted by agents for our on-ground network. That same expertise now plans your holiday, end to end." />
+          <SectionHeading eyebrow="Why Ivaan Escapes" title="Travel that feels" accent="effortless" text="We are a B2B travel company at heart — trusted by agents for our on-ground network. That same expertise now plans your holiday, end to end." />
           <div className="mt-10 grid gap-5 sm:grid-cols-2">
             {items.map((it, k) => (
               <Reveal key={it.title} delay={k * 0.08} className="group rounded-3xl border border-line bg-surface p-6 transition-colors hover:border-gold/50">
@@ -500,20 +582,25 @@ function PartnerBand() {
                 <h2 className="mt-4 font-display text-4xl font-semibold leading-tight sm:text-5xl">
                   Grow your business with <em className="text-gilded">India's trusted B2B</em> travel partner
                 </h2>
-                <p className="mt-4 max-w-xl text-ivory/75">Exclusive net rates, white-label itineraries, quick quotations and a dedicated operations team — so you can sell with confidence.</p>
+                <p className="mt-4 max-w-xl text-ivory/75">Exclusive net rates, white-label itineraries, quick quotations and a dedicated operations team. Let the client enjoy the vacation — you enjoy the margin.</p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Link to="/partners" className="btn-gold">
                     Become a Partner <ArrowRight className="h-4 w-4" />
                   </Link>
-                  <a href={waLink("Hello Ivaanescapes! I'm a travel agent and would like to know about your B2B partner rates.")} target="_blank" rel="noopener" className="btn-wa">
+                  <a href={waLink("Hello Ivaan Escapes! I'm a travel agent and would like to know about your B2B partner rates.")} target="_blank" rel="noopener" className="btn-wa">
                     <WhatsAppIcon className="h-4 w-4" /> Get Agent Rates
                   </a>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {['Exclusive net rates', 'White-label itineraries', 'Quotes in under 2 hrs', 'Dedicated ops manager'].map((t, k) => (
+                {[
+                  ['1500+', 'Happy travel agents'],
+                  [LEMON_TREE.count, 'Lemon Tree & Aurika hotels'],
+                  ['24 × 7', 'Best deals, always available'],
+                  ['Instant', 'Confirmation & DMC support'],
+                ].map(([n, t]) => (
                   <div key={t} className="rounded-2xl border border-ivory/15 bg-ivory/5 p-5">
-                    <p className="font-cinzel text-2xl font-bold text-gold-soft">0{k + 1}</p>
+                    <p className="font-cinzel text-2xl font-bold text-gold-soft">{n}</p>
                     <p className="mt-2 text-sm font-semibold">{t}</p>
                   </div>
                 ))}
@@ -598,7 +685,7 @@ function BlogTeaser() {
 
 export default function Home() {
   useEffect(() => {
-    document.title = 'Ivaanescapes — Escape the Ordinary | Holiday Packages India, Maldives & Bali'
+    document.title = 'Ivaan Escapes — Escape the Ordinary | India Holiday Packages & B2B Hotel Deals'
   }, [])
   return (
     <>
@@ -609,6 +696,7 @@ export default function Home() {
       </div>
       <Destinations />
       <Featured />
+      <HotelDeals />
       <HowItWorks />
       <QuoteBanner />
       <WhyUs />

@@ -40,21 +40,19 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 export default function Packages() {
   const [sp, setSp] = useSearchParams()
   const { openChat } = useUI()
-  const region = sp.get('region') ?? ''
   const dest = sp.get('dest') ?? ''
   const theme = sp.get('theme') ?? ''
   const dur = sp.get('dur') ?? ''
   const sort = sp.get('sort') ?? 'popular'
 
   useEffect(() => {
-    document.title = 'Holiday Packages — Ivaanescapes'
+    document.title = 'Holiday Packages — Ivaan Escapes'
   }, [])
 
   const set = (k: string, v: string) => {
     const n = new URLSearchParams(sp)
     if (!v || n.get(k) === v) n.delete(k)
     else n.set(k, v)
-    if (k === 'region') n.delete('dest')
     setSp(n, { replace: true, preventScrollReset: true })
   }
 
@@ -62,7 +60,6 @@ export default function Packages() {
     const d = DURATIONS.find((x) => x.id === dur)
     const r = PACKAGES.filter(
       (p) =>
-        (!region || p.region === region) &&
         (!dest || p.destination === dest) &&
         (!theme || p.themes.includes(theme as Theme)) &&
         (!d || d.test(p.days)),
@@ -70,9 +67,9 @@ export default function Packages() {
     if (sort === 'price') return [...r].sort((a, b) => a.priceFrom - b.priceFrom)
     if (sort === 'days') return [...r].sort((a, b) => a.days - b.days)
     return [...r].sort((a, b) => Number(!!b.popular) - Number(!!a.popular))
-  }, [region, dest, theme, dur, sort])
+  }, [dest, theme, dur, sort])
 
-  const active = region || dest || theme || dur
+  const active = dest || theme || dur
   const destName = dest && getDestination(dest)?.name
 
   return (
@@ -81,7 +78,7 @@ export default function Packages() {
         eyebrow="Holiday Packages"
         title="Journeys worth"
         accent="remembering"
-        text="One signature package for every destination — transparent pricing, handpicked hotels and booking on WhatsApp in one tap."
+        text="Handpicked India holidays — Kashmir to Kerala. Transparent pricing, partner hotels and booking on WhatsApp in one tap."
         image="photo-1536295243470-d7cba4efab7b"
       />
 
@@ -91,16 +88,17 @@ export default function Packages() {
           <div className="z-30 rounded-3xl border border-line bg-bg/90 px-4 py-4 backdrop-blur-xl sm:px-5 lg:sticky lg:top-[72px]">
             <div className="flex flex-col gap-3">
               <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
-                <Chip active={!region} onClick={() => set('region', '')}>
+                <Chip active={!dest} onClick={() => set('dest', '')}>
                   All
                 </Chip>
-                <Chip active={region === 'india'} onClick={() => set('region', 'india')}>
-                  🇮🇳 India
-                </Chip>
-                <Chip active={region === 'international'} onClick={() => set('region', 'international')}>
-                  ✈️ International
-                </Chip>
-                <span className="mx-2 h-6 w-px shrink-0 bg-line" />
+                {DESTINATIONS.map((d) => (
+                  <Chip key={d.slug} active={dest === d.slug} onClick={() => set('dest', d.slug)}>
+                    {d.name.split(' & ')[0]}
+                  </Chip>
+                ))}
+              </div>
+              <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
+                <span className="shrink-0 text-xs font-bold uppercase tracking-[0.15em] text-muted">Style</span>
                 {THEMES.map((t) => (
                   <Chip key={t} active={theme === t} onClick={() => set('theme', t)}>
                     {t}
@@ -108,14 +106,6 @@ export default function Packages() {
                 ))}
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <select value={dest} onChange={(e) => set('dest', e.target.value)} aria-label="Destination" className="min-w-0 max-w-full rounded-full border border-line bg-surface px-4 py-2 text-[16px] font-semibold text-ink outline-none focus:border-gold sm:text-sm">
-                  <option value="">All destinations</option>
-                  {DESTINATIONS.filter((d) => !region || d.region === region).map((d) => (
-                    <option key={d.slug} value={d.slug}>
-                      {d.name}
-                    </option>
-                  ))}
-                </select>
                 <select value={dur} onChange={(e) => set('dur', e.target.value)} aria-label="Duration" className="min-w-0 max-w-full rounded-full border border-line bg-surface px-4 py-2 text-[16px] font-semibold text-ink outline-none focus:border-gold sm:text-sm">
                   <option value="">Any duration</option>
                   {DURATIONS.map((d) => (

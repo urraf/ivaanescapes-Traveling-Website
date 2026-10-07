@@ -10,7 +10,7 @@ export default function Blog() {
   const [lead, ...rest] = BLOGS
 
   useEffect(() => {
-    document.title = 'Travel Journal — Ivaanescapes'
+    document.title = 'Travel Journal — Ivaan Escapes'
   }, [])
 
   return (

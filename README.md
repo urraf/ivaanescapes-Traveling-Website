@@ -1,6 +1,6 @@
-# Ivaanescapes — Escape the Ordinary
+# Ivaan Escapes — Escape the Ordinary
 
-Travel website for Ivaanescapes (B2B travel company). React + Vite + Tailwind + Framer Motion, with a Groq-powered AI travel assistant.
+Travel website for Ivaan Escapes (B2B travel company). React + Vite + Tailwind + Framer Motion, with a Groq-powered AI travel assistant.
 
 ## Run locally
 
@@ -24,10 +24,10 @@ If the key is missing or Groq is down, the chat still answers with package sugge
 
 | What | File |
 |---|---|
-| Phone, WhatsApp, email, address, socials | `src/config/site.ts` |
+| Phone numbers (team), email, address, GST, socials | `src/config/site.ts` |
 | Packages, prices, itineraries | `src/data/packages.ts` |
 | Destinations | `src/data/destinations.ts` |
-| Hotels & stays | `src/data/stays.ts` |
+| B2B hotel deals (Goa, Rajasthan, Maharashtra, chains, Lemon Tree) | `src/data/hotels.ts` |
 | Reviews (**sample — replace with real ones**) | `src/data/reviews.ts` |
 | Blog posts | `src/data/blogs.ts` |
 | AI assistant personality & rules | `api/chat.ts` |
@@ -41,5 +41,5 @@ Package page → choose hotel tier, date and travellers → **Book on WhatsApp**
 ## Before going live
 
 - Replace the sample reviews in `src/data/reviews.ts` with real ones.
-- Confirm email, address and social links in `src/config/site.ts`.
-- Once the domain is known, change `og:image` in `index.html` to the full URL (e.g. `https://yourdomain.com/og-image.jpg`) so WhatsApp and Facebook link previews show the image.
+- Add social media links in `src/config/site.ts` (icons stay hidden until filled in).
+- Deploy to the `www.ivaanescapes.com` domain — link previews and Google details already point there.

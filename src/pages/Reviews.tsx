@@ -12,12 +12,12 @@ export default function Reviews() {
   const linkFor = (trip: string) => PACKAGES.find((p) => p.title === trip)
 
   useEffect(() => {
-    document.title = 'Traveller Reviews — Ivaanescapes'
+    document.title = 'Traveller Reviews — Ivaan Escapes'
   }, [])
 
   return (
     <>
-      <PageHero eyebrow="Reviews" title="Stories from" accent="our travellers" text="Honeymooners, families, pilgrims and travel partners — here's what they say about travelling with Ivaanescapes." image="photo-1614505241550-0777412c47ec">
+      <PageHero eyebrow="Reviews" title="Stories from" accent="our travellers" text="Honeymooners, families, pilgrims and travel partners — here's what they say about travelling with Ivaan Escapes." image="photo-1564327287902-0ccf559d839e">
         <div className="mt-8 inline-flex items-center gap-4 rounded-2xl border border-ivory/15 bg-navy/40 px-5 py-3 backdrop-blur">
           <span className="text-gilded font-display text-5xl font-bold">{avg.toFixed(1)}</span>
           <span>
@@ -59,7 +59,7 @@ export default function Reviews() {
         <div className="container-x mt-10 text-center">
           <p className="font-display text-3xl font-semibold">Travelled with us?</p>
           <p className="mt-2 text-muted">We'd love to hear your story.</p>
-          <a href={waLink("Hello Ivaanescapes! I'd like to share a review of my trip:")} target="_blank" rel="noopener" className="btn-wa mt-6">
+          <a href={waLink("Hello Ivaan Escapes! I'd like to share a review of my trip:")} target="_blank" rel="noopener" className="btn-wa mt-6">
             <WhatsAppIcon className="h-4 w-4" /> Share your experience
           </a>
         </div>

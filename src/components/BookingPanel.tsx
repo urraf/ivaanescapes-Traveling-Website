@@ -45,7 +45,7 @@ export default function BookingPanel({ p }: { p: Package }) {
     const when = date ? fmtDay(date) : 'Flexible'
     const people = `${adults} Adult${adults > 1 ? 's' : ''}${kids ? `, ${kids} Child${kids > 1 ? 'ren' : ''}` : ''}`
     return [
-      "Hello Ivaanescapes! ✈️ I'd like to book this package:",
+      "Hello Ivaan Escapes! ✈️ I'd like to book this package:",
       '',
       `*${p.title}* (${p.nights}N/${p.days}D)`,
       `📍 Route: ${p.route}`,

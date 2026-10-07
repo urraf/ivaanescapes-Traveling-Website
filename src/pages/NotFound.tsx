@@ -5,7 +5,7 @@ import { Img } from '../components/ui'
 
 export default function NotFound() {
   useEffect(() => {
-    document.title = 'Page not found — Ivaanescapes'
+    document.title = 'Page not found — Ivaan Escapes'
   }, [])
   return (
     <section className="grain relative isolate grid min-h-[100svh] place-items-center overflow-hidden bg-navy px-4 text-center text-ivory">
