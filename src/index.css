@@ -1,0 +1,304 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* ---------- Design tokens ---------- */
+:root,
+[data-theme='dark'] {
+  --bg: #070b24;
+  --bg-2: #0b1132;
+  --surface: #10173f;
+  --surface-2: #161f52;
+  --ink: #f6f0e1;
+  --muted: #a8adc9;
+  --line: rgba(212, 175, 55, 0.18);
+  --gold: #d4af37;
+  --gold-soft: #f1d27a;
+  --gold-deep: #a8841f;
+  --glass: rgba(10, 15, 45, 0.55);
+  --shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --bg: #fbf7ee;
+  --bg-2: #f4ecda;
+  --surface: #ffffff;
+  --surface-2: #f8f1e2;
+  --ink: #0b1033;
+  --muted: #545a7a;
+  --line: rgba(11, 16, 51, 0.12);
+  --gold: #b48717;
+  --gold-soft: #d4af37;
+  --gold-deep: #8a6610;
+  --glass: rgba(255, 255, 255, 0.7);
+  --shadow: 0 20px 50px -24px rgba(11, 16, 51, 0.35);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-gold-deep: var(--gold-deep);
+  --color-navy: #070b24;
+  --color-ivory: #f6f0e1;
+  --color-whatsapp: #25d366;
+
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', ui-serif, Georgia, serif;
+  --font-cinzel: 'Cinzel', ui-serif, Georgia, serif;
+  --font-script: 'Allura', cursive;
+}
+
+/* ---------- Base ---------- */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+::selection {
+  background: var(--gold);
+  color: #070b24;
+}
+img {
+  user-select: none;
+}
+
+/* ---------- Utilities ---------- */
+@utility container-x {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (min-width: 640px) {
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 1024px) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility text-gilded {
+  background: linear-gradient(100deg, #a8841f 0%, #f1d27a 30%, #d4af37 50%, #fff3c4 65%, #b8922a 100%);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 7s linear infinite;
+}
+
+@utility bg-gilded {
+  background: linear-gradient(110deg, #a8841f 0%, #e6c35c 35%, #f6dc8c 50%, #d4af37 70%, #a8841f 100%);
+  background-size: 200% auto;
+}
+
+@utility eyebrow {
+  font-family: var(--font-cinzel);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+@utility glass {
+  background: var(--glass);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Gold primary button with sweep */
+@utility btn-gold {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.85rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #070b24;
+  background: linear-gradient(110deg, #b8922a 0%, #e9c766 40%, #f8e3a0 50%, #e2bd52 60%, #b8922a 100%);
+  background-size: 220% auto;
+  transition: background-position 0.6s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 30px -10px rgba(212, 175, 55, 0.6);
+  &:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px -12px rgba(212, 175, 55, 0.75);
+  }
+}
+
+@utility btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  padding: 0.8rem 1.4rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  transition: all 0.25s ease;
+  &:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+}
+
+@utility btn-wa {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  border-radius: 9999px;
+  padding: 0.85rem 1.5rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: white;
+  background: #1fae55;
+  box-shadow: 0 10px 30px -12px rgba(37, 211, 102, 0.7);
+  transition: transform 0.25s ease, background 0.25s ease;
+  &:hover {
+    background: #179c4a;
+    transform: translateY(-2px);
+  }
+}
+
+/* Postage-stamp perforated edge */
+@utility stamp {
+  --r: 7px;
+  mask: radial-gradient(var(--r) at var(--r) var(--r), #0000 97%, #000) calc(-1 * var(--r)) calc(-1 * var(--r)) / calc(2 * var(--r) + 6px) calc(2 * var(--r) + 6px) round;
+}
+
+/* Boarding-pass notch divider */
+@utility ticket-cut {
+  mask:
+    radial-gradient(circle 14px at 0 var(--cut, 60%), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 14px at 100% var(--cut, 60%), #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+/* ---------- Animations ---------- */
+@keyframes shine {
+  to {
+    background-position: 220% center;
+  }
+}
+@keyframes kenburns {
+  0% {
+    transform: scale(1.08) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.22) translate3d(-2%, -2%, 0);
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.kenburns {
+  animation: kenburns 14s ease-out forwards;
+}
+.marquee {
+  animation: marquee 45s linear infinite;
+}
+.marquee-slow {
+  animation: marquee 70s linear infinite;
+}
+.marquee:hover,
+.marquee-slow:hover {
+  animation-play-state: paused;
+}
+.floaty {
+  animation: floaty 5s ease-in-out infinite;
+}
+.ping-soft::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: ping-soft 2s ease-out infinite;
+  z-index: -1;
+}
+.spin-slow {
+  animation: spin-slow 40s linear infinite;
+}
+
+/* Grain overlay for a filmic feel */
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
