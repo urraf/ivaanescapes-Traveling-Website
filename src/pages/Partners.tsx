@@ -59,7 +59,14 @@ export default function Partners() {
         image="photo-1603202662747-00e33e7d1468"
       >
         <div className="mt-8 flex flex-wrap gap-3">
-          <a href="#register" className="btn-gold">
+          <a
+            href="#register"
+            onClick={(e) => {
+              e.preventDefault()
+              document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })
+            }}
+            className="btn-gold"
+          >
             Register as a Partner
           </a>
           <a href={waLink("Hello Ivaanescapes! I'm a travel agent and would like your B2B rate sheet.")} target="_blank" rel="noopener" className="btn-wa">
@@ -132,7 +139,7 @@ export default function Partners() {
                 <input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="Contact person *" className={input} />
                 <input required value={f.city} onChange={(e) => setF({ ...f, city: e.target.value })} placeholder="City *" className={input} />
               </div>
-              <input required type="tel" inputMode="tel" pattern="[0-9+\s-]{8,15}" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="Phone / WhatsApp number *" className={input} />
+              <input required type="tel" inputMode="tel" pattern="[0-9+\s\-]{8,15}" title="Enter a valid phone number" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="Phone / WhatsApp number *" className={input} />
               <select value={f.volume} onChange={(e) => setF({ ...f, volume: e.target.value })} className={input} aria-label="Monthly bookings">
                 <option value="">Approx. monthly bookings (optional)</option>
                 <option>1 – 5</option>

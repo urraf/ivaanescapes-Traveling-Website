@@ -176,16 +176,17 @@ function JourneyFinder() {
     if (dest) sp.set('dest', dest)
     if (dur) sp.set('dur', dur)
     if (theme) sp.set('theme', theme)
-    nav(`/packages${sp.size ? `?${sp}` : ''}`)
+    const q = sp.toString()
+    nav(q ? `/packages?${q}` : '/packages')
   }
 
-  const field = 'w-full appearance-none bg-transparent pr-6 text-[0.95rem] font-semibold text-ink outline-none cursor-pointer'
+  const field = 'w-full appearance-none bg-transparent pr-6 text-base font-semibold text-ink outline-none cursor-pointer'
 
   return (
     <div className="container-x relative z-10 -mt-24 sm:-mt-28">
       <Reveal>
         <div className="relative rounded-[2rem] border border-line bg-surface p-3 shadow-[var(--shadow)]">
-          <div className="grid gap-2 md:grid-cols-[1fr_1fr_1fr_auto] md:gap-0">
+          <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-[1fr_1fr_1fr_auto] lg:gap-0">
             {[
               {
                 icon: MapPin,
@@ -230,7 +231,7 @@ function JourneyFinder() {
                 ),
               },
             ].map((f, k) => (
-              <label key={f.label} className={cn('relative flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-surface-2', k > 0 && 'md:border-l md:border-line md:rounded-none')}>
+              <label key={f.label} className={cn('relative flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3 transition-colors hover:bg-surface-2', k > 0 && 'lg:rounded-none lg:border-l lg:border-line')}>
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gold/10 text-gold">
                   <f.icon className="h-[18px] w-[18px]" />
                 </span>
@@ -241,7 +242,7 @@ function JourneyFinder() {
                 <ChevronRight className="pointer-events-none absolute right-4 h-4 w-4 rotate-90 text-muted" />
               </label>
             ))}
-            <button onClick={go} className="btn-gold !rounded-[1.4rem] !px-8 !py-4 md:ml-2">
+            <button onClick={go} className="btn-gold whitespace-nowrap !rounded-[1.4rem] !px-8 !py-4 sm:col-span-3 lg:col-span-1 lg:ml-2">
               <Search className="h-4 w-4" /> Find My Escape
             </button>
           </div>

@@ -6,6 +6,7 @@ import { useUI } from '../context/ui'
 import { DESTINATIONS } from '../data/destinations'
 import { PACKAGES } from '../data/packages'
 import { GENERAL_WA, inr } from '../lib/utils'
+import { useScrollLock } from '../lib/hooks'
 import { WhatsAppIcon } from './ui'
 
 type Msg = { role: 'user' | 'assistant'; content: string }
@@ -36,28 +37,30 @@ function offlineReply(q: string): string {
   return `Here are some journeys you might love:\n${list}\n\nFor a personalised quote, tap **WhatsApp** above and our experts will reply right away.`
 }
 
-/** Minimal, safe markdown: **bold**, [links](/path), and "- " bullets. */
+/** Minimal, safe markdown: **bold**, *italic*, [links](/path), headings, bullets and numbered lists. */
 function renderInline(text: string, onNav: () => void): ReactNode[] {
   const out: ReactNode[] = []
-  const re = /\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g
+  const re = /\*\*(.+?)\*\*|\*(?!\s)([^*]+?)\*|\[([^\]]+)\]\(([^)\s]+)\)/g
   let last = 0
   let m: RegExpExecArray | null
   while ((m = re.exec(text))) {
     if (m.index > last) out.push(text.slice(last, m.index))
+    const [label, href] = [m[3], m[4]]
     if (m[1]) out.push(<strong key={m.index}>{m[1]}</strong>)
-    else if (m[3].startsWith('/'))
+    else if (m[2]) out.push(<em key={m.index}>{m[2]}</em>)
+    else if (href.startsWith('/'))
       out.push(
-        <Link key={m.index} to={m[3]} onClick={onNav} className="font-semibold text-gold underline decoration-gold/40 underline-offset-2">
-          {m[2]}
+        <Link key={m.index} to={href} onClick={onNav} className="font-semibold text-gold underline decoration-gold/40 underline-offset-2">
+          {label}
         </Link>,
       )
-    else if (/^https?:\/\//.test(m[3]))
+    else if (/^https?:\/\//.test(href))
       out.push(
-        <a key={m.index} href={m[3]} target="_blank" rel="noopener noreferrer" className="font-semibold text-gold underline">
-          {m[2]}
+        <a key={m.index} href={href} target="_blank" rel="noopener noreferrer" className="font-semibold text-gold underline">
+          {label}
         </a>,
       )
-    else out.push(m[2])
+    else out.push(label)
     last = re.lastIndex
   }
   if (last < text.length) out.push(text.slice(last))
@@ -70,13 +73,15 @@ function Markdown({ text, onNav }: { text: string; onNav: () => void }) {
     <>
       {lines.map((line, i) => {
         const bullet = /^\s*[-*•]\s+/.test(line)
-        const numbered = /^\s*\d+[.)]\s+/.test(line)
+        const num = line.match(/^\s*(\d+)[.)]\s+/)?.[1]
+        const heading = line.match(/^\s*#{1,6}\s+(.*)/)?.[1]
         if (!line.trim()) return <div key={i} className="h-2" />
-        if (bullet || numbered)
+        if (heading) return <p key={i} className="mt-1 font-bold text-ink">{renderInline(heading, onNav)}</p>
+        if (bullet || num)
           return (
             <div key={i} className="flex gap-2 py-0.5">
-              <span className="text-gold">◆</span>
-              <span>{renderInline(line.replace(/^\s*([-*•]|\d+[.)])\s+/, ''), onNav)}</span>
+              <span className="shrink-0 font-semibold text-gold">{num ? `${num}.` : '◆'}</span>
+              <span className="min-w-0">{renderInline(line.replace(/^\s*([-*•]|\d+[.)])\s+/, ''), onNav)}</span>
             </div>
           )
         return <Fragment key={i}>{<p>{renderInline(line, onNav)}</p>}</Fragment>
@@ -92,22 +97,35 @@ export default function ChatAssistant() {
   const [loading, setLoading] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 639px)').matches)
 
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)')
+    const onChange = () => setNarrow(mq.matches)
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  // On phones the assistant is full-screen, so stop the page behind it from scrolling.
+  useScrollLock(chatOpen && narrow)
+
+  // Keep the newest message in view — including when the chat is reopened.
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
-  }, [messages, loading])
+  }, [messages, loading, chatOpen])
 
   useEffect(() => {
-    if (chatOpen && window.innerWidth >= 640) inputRef.current?.focus()
-  }, [chatOpen])
+    if (chatOpen && !narrow) inputRef.current?.focus()
+  }, [chatOpen, narrow])
 
+  // Send a prompt handed over from elsewhere (e.g. "Ask our AI" on a package) once any reply in flight is done.
   useEffect(() => {
-    if (chatOpen && pendingPrompt) {
+    if (chatOpen && pendingPrompt && !loading) {
       send(pendingPrompt)
       clearPendingPrompt()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatOpen, pendingPrompt])
+  }, [chatOpen, pendingPrompt, loading])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setChatOpen(false)
@@ -127,6 +145,7 @@ export default function ChatAssistant() {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ messages: next.filter((m) => m !== WELCOME) }),
+        signal: typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(25000) : undefined,
       })
       const data = (await res.json().catch(() => ({}))) as { reply?: string }
       if (!res.ok || !data.reply) throw new Error('no reply')
@@ -138,7 +157,7 @@ export default function ChatAssistant() {
     }
   }
 
-  const closeOnMobile = () => window.innerWidth < 640 && setChatOpen(false)
+  const closeOnMobile = () => narrow && setChatOpen(false)
 
   return (
     <AnimatePresence>
@@ -150,7 +169,7 @@ export default function ChatAssistant() {
           transition={{ type: 'spring', damping: 28, stiffness: 300 }}
           role="dialog"
           aria-label="AI travel assistant"
-          className="fixed inset-0 z-[70] flex flex-col overflow-hidden bg-bg sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(640px,calc(100vh-3rem))] sm:w-[400px] sm:rounded-[1.75rem] sm:border sm:border-line sm:shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
+          className="fixed inset-0 z-[70] flex flex-col overflow-hidden bg-bg sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[min(640px,calc(100dvh-3rem))] sm:w-[400px] sm:rounded-[1.75rem] sm:border sm:border-line sm:shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]"
         >
           {/* Header */}
           <div className="grain relative flex items-center gap-3 bg-navy px-4 py-4 text-ivory">
@@ -184,8 +203,8 @@ export default function ChatAssistant() {
                 <div
                   className={
                     m.role === 'user'
-                      ? 'bg-gilded max-w-[85%] rounded-2xl rounded-br-md px-4 py-2.5 text-sm font-medium text-navy'
-                      : 'max-w-[90%] rounded-2xl rounded-bl-md border border-line bg-surface px-4 py-3 text-sm leading-relaxed text-ink'
+                      ? 'bg-gilded max-w-[85%] break-words rounded-2xl rounded-br-md px-4 py-2.5 text-sm font-medium text-navy [overflow-wrap:anywhere]'
+                      : 'max-w-[90%] break-words rounded-2xl rounded-bl-md border border-line bg-surface px-4 py-3 text-sm leading-relaxed text-ink [overflow-wrap:anywhere]'
                   }
                 >
                   {m.role === 'user' ? m.content : <Markdown text={m.content} onNav={closeOnMobile} />}

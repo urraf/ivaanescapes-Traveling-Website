@@ -2,19 +2,26 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, MapPin, X } from 'lucide-react'
 import { STAYS, STAY_TYPES, type Stay, type StayType } from '../data/stays'
-import { cn, inr, waLink } from '../lib/utils'
+import { cn, fmtDay, inr, todayLocal, waLink } from '../lib/utils'
+import { useScrollLock } from '../lib/hooks'
 import BoardingPassCTA from '../components/BoardingPassCTA'
 import { Img, PageHero, Stars, WhatsAppIcon } from '../components/ui'
 
 function EnquiryModal({ stay, onClose }: { stay: Stay; onClose: () => void }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = todayLocal()
   const [checkIn, setCheckIn] = useState('')
+  useScrollLock(true)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
   const [nights, setNights] = useState(2)
   const [rooms, setRooms] = useState(1)
   const [guests, setGuests] = useState(2)
 
   const send = () => {
-    const when = checkIn ? new Date(checkIn + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Flexible'
+    const when = checkIn ? fmtDay(checkIn) : 'Flexible'
     const msg = [
       'Hello Ivaanescapes! 🏨 I would like to check availability for:',
       '',
@@ -48,7 +55,7 @@ function EnquiryModal({ stay, onClose }: { stay: Stay; onClose: () => void }) {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 60, opacity: 0 }}
         transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-        className="relative w-full overflow-hidden rounded-t-[2rem] bg-surface sm:max-w-md sm:rounded-[2rem]"
+        className="relative max-h-[100svh] w-full overflow-y-auto rounded-t-[2rem] bg-surface sm:max-h-[calc(100svh-2rem)] sm:max-w-md sm:rounded-[2rem]"
       >
         <div className="relative h-40">
           <Img id={stay.image} alt={stay.name} w={800} sizes="448px" className="h-full w-full object-cover" />

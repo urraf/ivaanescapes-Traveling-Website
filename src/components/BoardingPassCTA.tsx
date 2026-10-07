@@ -10,12 +10,12 @@ export default function BoardingPassCTA() {
       <div className="container-x">
         <Reveal>
           <div className="relative mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-gold/30 bg-surface shadow-[var(--shadow)] md:grid-cols-[1fr_auto_300px]">
-            <div className="p-8 sm:p-10">
+            <div className="p-6 sm:p-10">
               <p className="eyebrow">Boarding Pass · Ivaanescapes Air</p>
               <div className="mt-6 flex items-center gap-4 sm:gap-8">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-muted">From</p>
-                  <p className="font-cinzel text-4xl font-bold sm:text-5xl">YOU</p>
+                  <p className="font-cinzel text-3xl font-bold min-[380px]:text-4xl sm:text-5xl">YOU</p>
                   <p className="text-xs text-muted">Your city</p>
                 </div>
                 <div className="relative flex-1">
@@ -28,7 +28,7 @@ export default function BoardingPassCTA() {
                 </div>
                 <div className="text-right">
                   <p className="text-xs font-bold uppercase tracking-widest text-muted">To</p>
-                  <p className="text-gilded font-cinzel text-4xl font-bold sm:text-5xl">ESC</p>
+                  <p className="text-gilded font-cinzel text-3xl font-bold min-[380px]:text-4xl sm:text-5xl">ESC</p>
                   <p className="text-xs text-muted">Extraordinary</p>
                 </div>
               </div>

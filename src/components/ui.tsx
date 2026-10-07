@@ -30,10 +30,10 @@ export const YoutubeIcon = (p: SVGProps<SVGSVGElement>) => (
 /* ---------- Logo ---------- */
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link to="/" className={cn('group flex items-center gap-2.5', className)} aria-label="Ivaanescapes home">
-      <img src="/logo-mark.webp" alt="" width={240} height={151} className="h-9 w-auto transition-transform duration-500 group-hover:rotate-[-8deg] sm:h-10" />
+    <Link to="/" className={cn('group flex min-w-0 items-center gap-2 min-[380px]:gap-2.5', className)} aria-label="Ivaanescapes home">
+      <img src="/logo-mark.webp" alt="" width={240} height={151} className="h-8 w-auto shrink-0 transition-transform duration-500 group-hover:rotate-[-8deg] min-[380px]:h-9 sm:h-10" />
       <span className="flex flex-col leading-none">
-        <span className="text-gilded font-cinzel text-[1.05rem] font-bold tracking-[0.08em] sm:text-lg">
+        <span className="text-gilded whitespace-nowrap font-cinzel text-[0.92rem] font-bold tracking-[0.06em] min-[380px]:text-[1.05rem] min-[380px]:tracking-[0.08em] sm:text-lg">
           IVAANESCAPES
         </span>
         <span className="mt-1 flex items-center gap-1.5 font-cinzel text-[0.55rem] tracking-[0.45em] text-gold">

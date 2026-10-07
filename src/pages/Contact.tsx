@@ -22,7 +22,7 @@ export default function Contact() {
       `🙋 Name: ${f.name}`,
       `📞 Phone: ${f.phone}`,
       `📍 Destination: ${f.dest || 'Need suggestions'}`,
-      `📅 Travel month: ${f.month || 'Flexible'}`,
+      `📅 Travel month: ${f.month ? new Date(f.month + '-01T00:00').toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) : 'Flexible'}`,
       `👥 Travellers: ${f.people}`,
       f.msg ? `💬 ${f.msg}` : '',
     ]
@@ -93,7 +93,7 @@ export default function Contact() {
               <p className="text-sm text-muted">Your enquiry opens in WhatsApp — just press send.</p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <input required value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} placeholder="Your name *" className={input} />
-                <input required type="tel" inputMode="tel" pattern="[0-9+\s-]{8,15}" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="Phone number *" className={input} />
+                <input required type="tel" inputMode="tel" pattern="[0-9+\s\-]{8,15}" title="Enter a valid phone number" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="Phone number *" className={input} />
               </div>
               <div className="grid gap-4 sm:grid-cols-3">
                 <select value={f.dest} onChange={(e) => setF({ ...f, dest: e.target.value })} className={input} aria-label="Destination">

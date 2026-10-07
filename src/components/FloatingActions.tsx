@@ -24,7 +24,9 @@ export default function FloatingActions() {
     }
   }, [])
 
-  useEffect(() => setOpen(false), [pathname])
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
 
   const actions = [
     { label: 'Chat on WhatsApp', href: GENERAL_WA, icon: WhatsAppIcon, cls: 'bg-[#1fae55] text-white', external: true },

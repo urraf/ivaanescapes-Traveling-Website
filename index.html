@@ -14,6 +14,7 @@
     <meta property="og:image" content="/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <link rel="preload" as="image" href="/logo-mark.webp" />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -28,8 +29,45 @@
         if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
       } catch (e) {}
     </script>
+    <style>
+      #splash{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:radial-gradient(ellipse at center,#111a4a 0%,#070b24 70%);transition:opacity .7s ease,visibility .7s ease}
+      #splash.hide{opacity:0;visibility:hidden}
+      #splash .sp-wrap{display:flex;flex-direction:column;align-items:center;text-align:center}
+      #splash .sp-ring{position:relative;width:132px;height:132px;display:grid;place-items:center}
+      #splash .sp-ring svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}#splash .sp-arc{transform-box:fill-box;transform-origin:center;animation:sp-spin 1.6s linear infinite}
+      #splash .sp-ring img{width:78px;height:auto;animation:sp-float 2.4s ease-in-out infinite}
+      #splash .sp-name{margin-top:22px;font-family:Cinzel,Georgia,serif;font-weight:700;font-size:22px;letter-spacing:.32em;padding-left:.32em;background:linear-gradient(100deg,#a8841f,#f1d27a 35%,#d4af37 55%,#fff3c4 70%,#b8922a);background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sp-shine 2.5s linear infinite}
+      #splash .sp-tag{margin-top:4px;font-family:Allura,cursive;font-size:26px;color:#f1d27a;opacity:0;animation:sp-in .8s .3s ease forwards}
+      #splash .sp-bar{margin-top:22px;width:160px;height:2px;border-radius:2px;background:rgba(212,175,55,.15);overflow:hidden}
+      #splash .sp-bar i{display:block;height:100%;width:40%;background:linear-gradient(90deg,transparent,#f1d27a,transparent);animation:sp-bar 1.2s ease-in-out infinite}
+      @keyframes sp-spin{to{transform:rotate(360deg)}}
+      @keyframes sp-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+      @keyframes sp-shine{to{background-position:220% center}}
+      @keyframes sp-in{to{opacity:1}}
+      @keyframes sp-bar{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+      @media (prefers-reduced-motion:reduce){#splash *{animation-duration:0s!important}}
+    </style>
   </head>
   <body>
+    <div id="splash" role="status" aria-label="Loading Ivaanescapes">
+      <div class="sp-wrap">
+        <div class="sp-ring">
+          <svg viewBox="0 0 132 132" aria-hidden="true">
+            <defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#d4af37" stop-opacity="0"/><stop offset="1" stop-color="#f1d27a"/></linearGradient></defs>
+            <circle cx="66" cy="66" r="62" fill="none" stroke="rgba(212,175,55,.15)" stroke-width="1.5"/>
+            <circle class="sp-arc" cx="66" cy="66" r="62" fill="none" stroke="url(#sg)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="150 260"/>
+          </svg>
+          <img src="/logo-mark.webp" alt="" />
+        </div>
+        <div class="sp-name">IVAANESCAPES</div>
+        <div class="sp-tag">Escape the Ordinary</div>
+        <div class="sp-bar"><i></i></div>
+      </div>
+    </div>
+    <script>
+      // Safety net: never leave the splash up, even if the app fails to start.
+      setTimeout(function () { var s = document.getElementById('splash'); if (s) { s.classList.add('hide'); setTimeout(function () { s.remove() }, 800) } }, 6000)
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

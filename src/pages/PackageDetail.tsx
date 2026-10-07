@@ -5,12 +5,18 @@ import { CalendarDays, Check, ChevronDown, ChevronRight, Clock, MapPin, Navigati
 import { getPackage, PACKAGES } from '../data/packages'
 import { getDestination } from '../data/destinations'
 import { cn, img, inr } from '../lib/utils'
+import { useScrollLock } from '../lib/hooks'
 import BookingPanel from '../components/BookingPanel'
 import PackageCard from '../components/PackageCard'
 import { Img, Reveal, WhatsAppIcon } from '../components/ui'
 
-export default function PackageDetail() {
+// Keyed by slug so every package starts fresh (booking form, sheet, lightbox, open day).
+export default function PackageDetailPage() {
   const { slug = '' } = useParams()
+  return <PackageDetail key={slug} slug={slug} />
+}
+
+function PackageDetail({ slug }: { slug: string }) {
   const p = getPackage(slug)
   const [openDay, setOpenDay] = useState<number | 'all'>(0)
   const [sheet, setSheet] = useState(false)
@@ -20,15 +26,16 @@ export default function PackageDetail() {
 
   useEffect(() => {
     if (p) document.title = `${p.title} · ${p.nights}N/${p.days}D — Ivaanescapes`
-    setOpenDay(0)
   }, [p])
 
+  useScrollLock(sheet || !!lightbox)
+
   useEffect(() => {
-    document.body.style.overflow = sheet || lightbox ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [sheet, lightbox])
+    if (!lightbox) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setLightbox(null)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [lightbox])
 
   if (!p) return <Navigate to="/packages" replace />
   const d = getDestination(p.destination)

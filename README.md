@@ -37,3 +37,9 @@ Images are Unsplash photo IDs (for example `photo-1614591276564-7b3e69347a48`). 
 ## How booking works
 
 Package page → choose hotel tier, date and travellers → **Book on WhatsApp** opens a chat with **+91 85868 92228**, pre-filled with the package name, route, date, travellers, hotel category, estimated price and a link back to the package.
+
+## Before going live
+
+- Replace the sample reviews in `src/data/reviews.ts` with real ones.
+- Confirm email, address and social links in `src/config/site.ts`.
+- Once the domain is known, change `og:image` in `index.html` to the full URL (e.g. `https://yourdomain.com/og-image.jpg`) so WhatsApp and Facebook link previews show the image.

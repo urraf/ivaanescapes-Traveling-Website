@@ -55,7 +55,7 @@ export default function Packages() {
     if (!v || n.get(k) === v) n.delete(k)
     else n.set(k, v)
     if (k === 'region') n.delete('dest')
-    setSp(n, { replace: true })
+    setSp(n, { replace: true, preventScrollReset: true })
   }
 
   const list = useMemo(() => {
@@ -88,7 +88,7 @@ export default function Packages() {
       <section className="py-14 sm:py-20">
         <div className="container-x">
           {/* Filters */}
-          <div className="sticky top-[64px] z-30 -mx-4 border-b border-line bg-bg/90 px-4 py-4 backdrop-blur-xl sm:mx-0 sm:rounded-3xl sm:border sm:px-5">
+          <div className="z-30 rounded-3xl border border-line bg-bg/90 px-4 py-4 backdrop-blur-xl sm:px-5 lg:sticky lg:top-[72px]">
             <div className="flex flex-col gap-3">
               <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
                 <Chip active={!region} onClick={() => set('region', '')}>
@@ -108,7 +108,7 @@ export default function Packages() {
                 ))}
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <select value={dest} onChange={(e) => set('dest', e.target.value)} aria-label="Destination" className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink outline-none focus:border-gold">
+                <select value={dest} onChange={(e) => set('dest', e.target.value)} aria-label="Destination" className="min-w-0 max-w-full rounded-full border border-line bg-surface px-4 py-2 text-[16px] font-semibold text-ink outline-none focus:border-gold sm:text-sm">
                   <option value="">All destinations</option>
                   {DESTINATIONS.filter((d) => !region || d.region === region).map((d) => (
                     <option key={d.slug} value={d.slug}>
@@ -116,7 +116,7 @@ export default function Packages() {
                     </option>
                   ))}
                 </select>
-                <select value={dur} onChange={(e) => set('dur', e.target.value)} aria-label="Duration" className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink outline-none focus:border-gold">
+                <select value={dur} onChange={(e) => set('dur', e.target.value)} aria-label="Duration" className="min-w-0 max-w-full rounded-full border border-line bg-surface px-4 py-2 text-[16px] font-semibold text-ink outline-none focus:border-gold sm:text-sm">
                   <option value="">Any duration</option>
                   {DURATIONS.map((d) => (
                     <option key={d.id} value={d.id}>
@@ -124,7 +124,7 @@ export default function Packages() {
                     </option>
                   ))}
                 </select>
-                <select value={sort} onChange={(e) => set('sort', e.target.value === 'popular' ? '' : e.target.value)} aria-label="Sort" className="rounded-full border border-line bg-surface px-4 py-2 text-sm font-semibold text-ink outline-none focus:border-gold">
+                <select value={sort} onChange={(e) => set('sort', e.target.value === 'popular' ? '' : e.target.value)} aria-label="Sort" className="min-w-0 max-w-full rounded-full border border-line bg-surface px-4 py-2 text-[16px] font-semibold text-ink outline-none focus:border-gold sm:text-sm">
                   {SORTS.map((s) => (
                     <option key={s.id} value={s.id}>
                       {s.label}
@@ -132,11 +132,11 @@ export default function Packages() {
                   ))}
                 </select>
                 {active && (
-                  <button onClick={() => setSp({}, { replace: true })} className="flex items-center gap-1.5 px-2 text-sm font-semibold text-gold hover:underline">
+                  <button onClick={() => setSp({}, { replace: true, preventScrollReset: true })} className="flex items-center gap-1.5 px-2 text-sm font-semibold text-gold hover:underline">
                     <RotateCcw className="h-3.5 w-3.5" /> Reset
                   </button>
                 )}
-                <span className="ml-auto text-sm text-muted">
+                <span className="w-full text-sm text-muted sm:ml-auto sm:w-auto">
                   <b className="text-ink">{list.length}</b> {list.length === 1 ? 'journey' : 'journeys'}
                   {destName ? ` in ${destName}` : ''}
                 </span>
@@ -161,7 +161,7 @@ export default function Packages() {
               <p className="mt-4 font-display text-2xl font-semibold">No exact match — but we can craft it!</p>
               <p className="mt-2 text-sm text-muted">Try fewer filters, or tell our AI concierge what you're looking for.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-2">
-                <button onClick={() => setSp({}, { replace: true })} className="btn-ghost">
+                <button onClick={() => setSp({}, { replace: true, preventScrollReset: true })} className="btn-ghost">
                   Clear filters
                 </button>
                 <button onClick={() => openChat()} className="btn-gold">

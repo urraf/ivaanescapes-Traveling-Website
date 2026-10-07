@@ -1,8 +1,9 @@
 // Serverless AI travel assistant (Vercel function). Proxies Groq so the API key stays server-side.
 // Local dev: served by the middleware in vite.config.ts.
-import { PACKAGES } from '../src/data/packages'
-import { STAYS } from '../src/data/stays'
-import { SITE } from '../src/config/site'
+// Explicit .js extensions: Vercel runs these as native ESM, which can't resolve extensionless imports.
+import { PACKAGES } from '../src/data/packages.js'
+import { STAYS } from '../src/data/stays.js'
+import { SITE } from '../src/config/site.js'
 
 type Msg = { role: 'user' | 'assistant'; content: string }
 
@@ -58,24 +59,31 @@ export async function POST(req: Request): Promise<Response> {
   if (!messages.length || messages[messages.length - 1].role !== 'user') return json({ error: 'Invalid request' }, 400)
 
   for (const model of MODELS) {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-      body: JSON.stringify({
-        model,
-        temperature: 0.6,
-        max_tokens: 500,
-        messages: [{ role: 'system', content: SYSTEM }, ...messages],
-      }),
-    })
+    let res: Response
+    try {
+      res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          temperature: 0.6,
+          max_tokens: 500,
+          messages: [{ role: 'system', content: SYSTEM }, ...messages],
+        }),
+        signal: AbortSignal.timeout(20000),
+      })
+    } catch (e) {
+      console.error('Groq request failed', e)
+      return json({ error: 'AI service unavailable' }, 504)
+    }
     if (res.ok) {
       const data = (await res.json()) as { choices?: { message?: { content?: string } }[] }
       const reply = (data.choices?.[0]?.message?.content ?? '').replace(/<think>[\s\S]*?<\/think>/g, '').trim()
       return json({ reply })
     }
-    // Retired or unknown model → try the next one. Anything else is a real failure.
+    // Retired/unknown model or a per-model rate limit → try the next one. Anything else is a real failure.
     const text = await res.text()
-    if (!(res.status === 404 || (res.status === 400 && /model/i.test(text)))) {
+    if (!(res.status === 404 || res.status === 429 || (res.status === 400 && /model/i.test(text)))) {
       console.error('Groq error', res.status, text.slice(0, 300))
       return json({ error: 'AI service unavailable' }, 502)
     }

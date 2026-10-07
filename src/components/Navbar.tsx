@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowRight, BedDouble, ChevronDown, Menu, Moon, Phone, Sparkles, Sun, X, Compass } from 'lucide-react'
@@ -7,6 +7,7 @@ import { packagesFor } from '../data/packages'
 import { SITE } from '../config/site'
 import { useUI } from '../context/ui'
 import { cn, GENERAL_WA, img, inr, telLink } from '../lib/utils'
+import { useMinWidth, useScrollLock } from '../lib/hooks'
 import { Logo, WhatsAppIcon } from './ui'
 
 const LINKS = [
@@ -27,7 +28,7 @@ function ThemeToggle({ className }: { className?: string }) {
     <button
       onClick={toggleTheme}
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-      className={cn('relative grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-current/20 transition-colors hover:border-gold hover:text-gold', className)}
+      className={cn('relative grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full border border-current/20 min-[380px]:h-10 min-[380px]:w-10 transition-colors hover:border-gold hover:text-gold', className)}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span key={theme} initial={{ y: 18, opacity: 0, rotate: -90 }} animate={{ y: 0, opacity: 1, rotate: 0 }} exit={{ y: -18, opacity: 0, rotate: 90 }} transition={{ duration: 0.3 }}>
@@ -189,6 +190,7 @@ export default function Navbar() {
   const [mega, setMega] = useState(false)
   const [mobile, setMobile] = useState(false)
   const timer = useRef<number | undefined>(undefined)
+  const travelsRef = useRef<HTMLDivElement>(null)
   const { pathname } = useLocation()
 
   useEffect(() => {
@@ -203,15 +205,31 @@ export default function Navbar() {
     setMobile(false)
   }, [pathname])
 
-  useEffect(() => {
-    document.body.style.overflow = mobile ? 'hidden' : ''
-  }, [mobile])
+  useScrollLock(mobile)
+  // The drawer is mobile-only: close it if the screen grows to desktop size (e.g. tablet rotation).
+  useMinWidth(1024, useCallback(() => setMobile(false), []))
 
-  const openMega = () => {
+  // Close the mega menu on outside tap or Escape (hover-out alone doesn't exist on touch screens).
+  useEffect(() => {
+    if (!mega) return
+    const onDown = (e: globalThis.PointerEvent) => !travelsRef.current?.contains(e.target as Node) && setMega(false)
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMega(false)
+    document.addEventListener('pointerdown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [mega])
+
+  // Hover only for real mice; touch devices use the tap toggle instead.
+  const openMega = (e: PointerEvent) => {
+    if (e.pointerType !== 'mouse') return
     window.clearTimeout(timer.current)
     setMega(true)
   }
-  const closeMega = () => {
+  const closeMega = (e: PointerEvent) => {
+    if (e.pointerType !== 'mouse') return
     timer.current = window.setTimeout(() => setMega(false), 160)
   }
 
@@ -228,14 +246,14 @@ export default function Navbar() {
           solid ? 'border-b border-line bg-bg/90 py-2.5 text-ink backdrop-blur-xl shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)]' : 'py-4 text-ivory sm:py-5',
         )}
       >
-        <div className="container-x flex items-center justify-between gap-4">
+        <div className="container-x flex items-center justify-between gap-3">
           <Logo />
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main">
+          <nav className="hidden items-center gap-5 lg:flex xl:gap-7" aria-label="Main">
             <NavLink to="/" end className={linkCls}>
               Home
             </NavLink>
-            <div onMouseEnter={openMega} onMouseLeave={closeMega}>
+            <div ref={travelsRef} onPointerEnter={openMega} onPointerLeave={closeMega}>
               <button
                 onClick={() => setMega((v) => !v)}
                 aria-expanded={mega}
@@ -253,15 +271,15 @@ export default function Navbar() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 min-[380px]:gap-2">
             <ThemeToggle />
             <a href={telLink} className="hidden items-center gap-2 rounded-full border border-current/20 px-4 py-2 text-sm font-semibold transition-colors hover:border-gold hover:text-gold xl:flex">
               <Phone className="h-4 w-4" /> {SITE.phoneDisplay}
             </a>
-            <a href={GENERAL_WA} target="_blank" rel="noopener" className="btn-gold hidden !py-2.5 sm:inline-flex">
+            <a href={GENERAL_WA} target="_blank" rel="noopener" className="btn-gold hidden whitespace-nowrap !py-2.5 sm:inline-flex lg:hidden xl:inline-flex">
               <WhatsAppIcon className="h-4 w-4" /> Plan My Trip
             </a>
-            <button onClick={() => setMobile(true)} aria-label="Open menu" className="grid h-10 w-10 place-items-center rounded-full border border-current/20 lg:hidden">
+            <button onClick={() => setMobile(true)} aria-label="Open menu" className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-current/20 min-[380px]:h-10 min-[380px]:w-10 lg:hidden">
               <Menu className="h-5 w-5" />
             </button>
           </div>

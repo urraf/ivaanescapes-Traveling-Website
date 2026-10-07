@@ -3,7 +3,7 @@ import { Minus, Plus, Sparkles } from 'lucide-react'
 import { TIERS, type Package, type TierId } from '../data/packages'
 import { getDestination } from '../data/destinations'
 import { useUI } from '../context/ui'
-import { cn, inr, waLink } from '../lib/utils'
+import { cn, fmtDay, inr, todayLocal, waLink } from '../lib/utils'
 import { WhatsAppIcon } from './ui'
 
 function Counter({ label, sub, value, min, max, onChange }: { label: string; sub: string; value: number; min: number; max: number; onChange: (n: number) => void }) {
@@ -36,12 +36,13 @@ export default function BookingPanel({ p }: { p: Package }) {
   const [name, setName] = useState('')
 
   const t = TIERS.find((x) => x.id === tier)!
-  const perAdult = Math.round((p.priceFrom * t.mult) / 100) * 100
+  // Standard shows the advertised price exactly; upgraded tiers are rounded to the nearest ₹100.
+  const perAdult = t.mult === 1 ? p.priceFrom : Math.round((p.priceFrom * t.mult) / 100) * 100
   const total = perAdult * adults + perAdult * 0.5 * kids
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
+  const today = useMemo(todayLocal, [])
 
   const message = () => {
-    const when = date ? new Date(date + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Flexible'
+    const when = date ? fmtDay(date) : 'Flexible'
     const people = `${adults} Adult${adults > 1 ? 's' : ''}${kids ? `, ${kids} Child${kids > 1 ? 'ren' : ''}` : ''}`
     return [
       "Hello Ivaanescapes! ✈️ I'd like to book this package:",
