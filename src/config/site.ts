@@ -16,9 +16,10 @@ export const SITE = {
     { name: 'Sejal', phone: '+918860996633', display: '+91 88609 96633' },
   ],
   email: 'sales@ivaanescapes.com',
-  website: 'ivaanescapes.com',
+  website: 'www.ivaanescapes.com',
   // Canonical origin used for SEO (canonical URLs, sitemap, structured data). No trailing slash.
-  url: 'https://ivaanescapes.com',
+  // Must match the primary domain set in Vercel (Settings → Domains), which redirects the other one here.
+  url: 'https://www.ivaanescapes.com',
   // Paste the content value from Google Search Console's "HTML tag" verification (optional — DNS verification also works).
   googleVerification: '',
   gst: '07ATLPV2446B2ZL',

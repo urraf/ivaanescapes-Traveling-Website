@@ -43,16 +43,16 @@ Package page → choose hotel tier, date and travellers → **Book on WhatsApp**
 
 Every page is **pre-rendered to static HTML at build time** (`src/entry-server.tsx` + `scripts/prerender.mjs`), so Google, Bing and WhatsApp/Facebook link previews see the full content, title, description and structured data without running JavaScript. In the browser, React hydrates that HTML.
 
-- **Per-page SEO** — each page declares it with `<Seo title description path image jsonLd />` (`src/lib/seo.tsx`): unique title, meta description, canonical URL (`https://ivaanescapes.com/...`), Open Graph + Twitter cards, robots.
+- **Per-page SEO** — each page declares it with `<Seo title description path image jsonLd />` (`src/lib/seo.tsx`): unique title, meta description, canonical URL (`https://www.ivaanescapes.com/...`), Open Graph + Twitter cards, robots.
 - **Structured data (JSON-LD)** — TravelAgency (address, phones, GST), WebSite, BreadcrumbList on every inner page, TouristTrip + Offer (price, day-wise itinerary) on packages, TouristDestination + FAQPage on destination pages, Hotel ItemLists on hotel pages, BlogPosting on articles. Validated with 0 errors on validator.schema.org.
 - **Landing pages** — `/destinations/<name>` (e.g. "Kashmir Tour Packages") and `/hotels/<region>` target the main search terms. Edit their copy and FAQs in `src/data/destinationContent.ts`.
 - **sitemap.xml & robots.txt** — generated on every build from the packages, destinations, hotel regions and blog posts (with an image sitemap). Adding a package or blog post adds it automatically.
-- **Technical** — real 404 status for unknown URLs, `www` → `ivaanescapes.com` redirect, clean URLs, self-hosted fonts with size-matched fallbacks (no layout shift), keyword-rich H1s, alt text on every image. The build fails if two pages share a title or a page forgets its `<Seo>`.
+- **Technical** — real 404 status for unknown URLs, clean URLs, self-hosted fonts with size-matched fallbacks (no layout shift), keyword-rich H1s, alt text on every image. The build fails if two pages share a title or a page forgets its `<Seo>`.
 
 ### After the site is live
 
 1. **Google Search Console** → add the domain `ivaanescapes.com` (DNS verification), or paste the HTML-tag code into `googleVerification` in `src/config/site.ts` and redeploy.
-2. Submit `https://ivaanescapes.com/sitemap.xml` under *Sitemaps*, then use *URL Inspection → Request indexing* on the home page and the destination pages.
+2. Submit `https://www.ivaanescapes.com/sitemap.xml` under *Sitemaps*, then use *URL Inspection → Request indexing* on the home page and the destination pages.
 3. Do the same in **Bing Webmaster Tools** (it can import from Search Console).
 4. Create / claim the **Google Business Profile** for the Lajpat Nagar IV office with the same name, address and phone as the website — this is what ranks you for "travel agency near me" and on Google Maps.
 5. Add your Instagram / Facebook / YouTube links in `src/config/site.ts` — they appear in the footer and in the structured data (`sameAs`).
@@ -62,4 +62,4 @@ Every page is **pre-rendered to static HTML at build time** (`src/entry-server.t
 
 - Replace the sample reviews in `src/data/reviews.ts` with real ones.
 - Add social media links in `src/config/site.ts` (icons stay hidden until filled in).
-- Point both `ivaanescapes.com` and `www.ivaanescapes.com` at Vercel; `www` redirects to the main domain automatically.
+- In Vercel → Settings → Domains, `www.ivaanescapes.com` is the primary domain and `ivaanescapes.com` redirects to it. If you ever switch the primary domain there, change `url` in `src/config/site.ts` to match — never add a domain redirect in `vercel.json` as well, or the two will loop.

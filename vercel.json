@@ -5,17 +5,6 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.ivaanescapes.com"
-        }
-      ],
-      "destination": "https://ivaanescapes.com/:path",
-      "permanent": true
-    },
-    {
       "source": "/stays",
       "destination": "/hotels",
       "permanent": true
