@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Clock, Globe, Mail, MapPin, Navigation, Phone, ReceiptText, Sparkles } from 'lucide-react'
 import { SITE, waNumber } from '../config/site'
 import { DESTINATIONS } from '../data/destinations'
 import { useUI } from '../context/ui'
 import { waLink } from '../lib/utils'
 import { PageHero, Reveal, WhatsAppIcon } from '../components/ui'
+import { ORG_ID, Seo, absUrl, breadcrumbs } from '../lib/seo'
 
 const NEEDS = ['Holiday package', 'Hotel booking', 'Family group trip', 'MICE / Corporate', 'Marriage function', 'B2B partnership']
 
@@ -12,14 +13,13 @@ export default function Contact() {
   const { openChat } = useUI()
   const [f, setF] = useState({ name: '', phone: '', need: NEEDS[0], dest: '', month: '', people: '2', msg: '' })
 
-  useEffect(() => {
-    document.title = 'Contact Us — Ivaan Escapes'
-  }, [])
 
   // Next 12 months as a simple list (works in every browser, unlike <input type="month">).
-  const months = useMemo(() => {
+  // Filled in after load so the pre-built page and the browser agree on the first render.
+  const [months, setMonths] = useState<string[]>([])
+  useEffect(() => {
     const d = new Date()
-    return Array.from({ length: 12 }, (_, i) => new Date(d.getFullYear(), d.getMonth() + i, 1).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }))
+    setMonths(Array.from({ length: 12 }, (_, i) => new Date(d.getFullYear(), d.getMonth() + i, 1).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })))
   }, [])
 
   const submit = (e: React.FormEvent) => {
@@ -46,6 +46,13 @@ export default function Contact() {
 
   return (
     <>
+      <Seo
+        title="Contact Us — Travel Agency in Lajpat Nagar, New Delhi"
+        description={`Call or WhatsApp Ivaan Escapes on ${SITE.phoneDisplay} or email ${SITE.email}. Office: ${SITE.address.full}. Available 24×7 for travellers, travel agents & corporates.`}
+        path="/contact"
+        image="photo-1623851293886-e9b3618ae902"
+        jsonLd={[breadcrumbs([{ name: 'Contact', path: '/contact' }]), { '@type': 'ContactPage', url: absUrl('/contact'), name: 'Contact Ivaan Escapes', mainEntity: { '@id': ORG_ID } }]}
+      />
       <PageHero eyebrow="Contact" title="Let's plan your" accent="next escape" text="Call or WhatsApp our team — we're available 24 × 7 for travellers, travel agents and corporates." image="photo-1623851293886-e9b3618ae902" />
 
       <section className="py-20 sm:py-28">
@@ -66,7 +73,7 @@ export default function Contact() {
                       <a href={`tel:${t.phone}`} aria-label={`Call ${t.name}`} className="grid h-10 w-10 place-items-center rounded-full border border-line transition-colors hover:border-gold hover:text-gold">
                         <Phone className="h-4 w-4" />
                       </a>
-                      <a href={`https://api.whatsapp.com/send?phone=${waNumber(t.phone)}&text=${encodeURIComponent(`Hello ${t.name}! I have an enquiry for Ivaan Escapes.`)}`} target="_blank" rel="noopener" aria-label={`WhatsApp ${t.name}`} className="grid h-10 w-10 place-items-center rounded-full bg-[#1fae55] text-white transition-transform hover:-translate-y-0.5">
+                      <a href={`https://api.whatsapp.com/send?phone=${waNumber(t.phone)}&text=${encodeURIComponent(`Hello ${t.name}! I have an enquiry for Ivaan Escapes.`)}`} target="_blank" rel="noopener" aria-label={`WhatsApp ${t.name}`} className="grid h-10 w-10 place-items-center rounded-full bg-wa-btn text-white transition-transform hover:-translate-y-0.5">
                         <WhatsAppIcon className="h-4 w-4" />
                       </a>
                     </span>

@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react'
-import { createBrowserRouter, Link, Navigate, Outlet, ScrollRestoration, useNavigation, useRouteError, type LazyRouteFunction, type RouteObject } from 'react-router-dom'
+import { Link, Navigate, Outlet, ScrollRestoration, useNavigation, useRouteError, type LazyRouteFunction, type RouteObject } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -88,7 +88,8 @@ const page =
   (load: () => Promise<{ default: ComponentType }>): LazyRouteFunction<RouteObject> =>
   async () => ({ Component: (await load()).default })
 
-export const router = createBrowserRouter([
+// Shared by the browser router (main.tsx) and the build-time pre-renderer (entry-server.tsx).
+export const routes: RouteObject[] = [
   {
     path: '/',
     Component: Layout,
@@ -98,7 +99,10 @@ export const router = createBrowserRouter([
       { index: true, Component: Home },
       { path: 'packages', lazy: page(() => import('./pages/Packages')) },
       { path: 'packages/:slug', lazy: page(() => import('./pages/PackageDetail')) },
+      { path: 'destinations', lazy: page(() => import('./pages/Destinations')) },
+      { path: 'destinations/:slug', lazy: page(() => import('./pages/Destination')) },
       { path: 'hotels', lazy: page(() => import('./pages/Hotels')) },
+      { path: 'hotels/:region', lazy: page(() => import('./pages/Hotels')) },
       { path: 'stays', element: <Navigate to="/hotels" replace /> },
       { path: 'partners', lazy: page(() => import('./pages/Partners')) },
       { path: 'reviews', lazy: page(() => import('./pages/Reviews')) },
@@ -108,4 +112,4 @@ export const router = createBrowserRouter([
       { path: '*', lazy: page(() => import('./pages/NotFound')) },
     ],
   },
-])
+]

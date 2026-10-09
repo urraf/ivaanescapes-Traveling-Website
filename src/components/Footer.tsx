@@ -80,7 +80,7 @@ export default function Footer() {
                 <a href={`tel:${t.phone}`} className="flex items-center gap-1.5 text-muted transition-colors hover:text-gold">
                   <Phone className="h-3.5 w-3.5 text-gold" /> {t.display}
                 </a>
-                <a href={`https://api.whatsapp.com/send?phone=${waNumber(t.phone)}`} target="_blank" rel="noopener" aria-label={`WhatsApp ${t.name}`} className="ml-auto text-[#1fae55] transition-opacity hover:opacity-70">
+                <a href={`https://api.whatsapp.com/send?phone=${waNumber(t.phone)}`} target="_blank" rel="noopener" aria-label={`WhatsApp ${t.name}`} className="ml-auto text-wa transition-opacity hover:opacity-70">
                   <WhatsAppIcon className="h-4 w-4" />
                 </a>
               </li>
@@ -110,7 +110,7 @@ export default function Footer() {
       </div>
 
       <div className="container-x relative flex flex-col items-center justify-between gap-3 border-t border-line py-6 text-center text-xs text-muted sm:flex-row sm:text-left">
-        <p>
+        <p suppressHydrationWarning>
           © {new Date().getFullYear()} {SITE.legalName} · GST {SITE.gst}
         </p>
         <p>Prices are indicative and subject to availability</p>

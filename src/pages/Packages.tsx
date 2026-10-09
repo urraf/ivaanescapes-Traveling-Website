@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { RotateCcw, SearchX, Sparkles } from 'lucide-react'
@@ -9,6 +9,7 @@ import { cn } from '../lib/utils'
 import PackageCard from '../components/PackageCard'
 import { PageHero } from '../components/ui'
 import BoardingPassCTA from '../components/BoardingPassCTA'
+import { Seo, absUrl, breadcrumbs } from '../lib/seo'
 
 const THEMES: Theme[] = ['Honeymoon', 'Family', 'Adventure', 'Beach', 'Spiritual', 'Culture', 'Nature']
 const DURATIONS = [
@@ -45,9 +46,6 @@ export default function Packages() {
   const dur = sp.get('dur') ?? ''
   const sort = sp.get('sort') ?? 'popular'
 
-  useEffect(() => {
-    document.title = 'Holiday Packages — Ivaan Escapes'
-  }, [])
 
   const set = (k: string, v: string) => {
     const n = new URLSearchParams(sp)
@@ -74,6 +72,20 @@ export default function Packages() {
 
   return (
     <>
+      <Seo
+        title="India Holiday Packages — Kashmir to Kerala"
+        description={`Compare ${PACKAGES.length} India holiday packages with prices, day-wise itineraries & inclusions — Kashmir, Leh Ladakh, Manali, Spiti, Kedarnath, Rishikesh, Goa, Kerala, Rajasthan & Mumbai.`}
+        path="/packages"
+        image="photo-1536295243470-d7cba4efab7b"
+        jsonLd={[
+          breadcrumbs([{ name: 'Packages', path: '/packages' }]),
+          {
+            '@type': 'ItemList',
+            name: 'India holiday packages',
+            itemListElement: PACKAGES.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: absUrl(`/packages/${p.slug}`), name: p.title })),
+          },
+        ]}
+      />
       <PageHero
         eyebrow="Holiday Packages"
         title="Journeys worth"

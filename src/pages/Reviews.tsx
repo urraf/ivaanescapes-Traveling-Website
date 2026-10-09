@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Quote } from 'lucide-react'
 import { REVIEWS } from '../data/reviews'
@@ -6,17 +5,22 @@ import { PACKAGES } from '../data/packages'
 import { waLink } from '../lib/utils'
 import BoardingPassCTA from '../components/BoardingPassCTA'
 import { PageHero, Reveal, Stars, WhatsAppIcon } from '../components/ui'
+import { Seo, breadcrumbs } from '../lib/seo'
 
 export default function Reviews() {
   const avg = REVIEWS.reduce((s, r) => s + r.rating, 0) / REVIEWS.length
   const linkFor = (trip: string) => PACKAGES.find((p) => p.title === trip)
 
-  useEffect(() => {
-    document.title = 'Traveller Reviews — Ivaan Escapes'
-  }, [])
 
   return (
     <>
+      <Seo
+        title="Traveller Reviews & Testimonials"
+        description="Read what honeymooners, families, pilgrims and travel agents say about travelling with Ivaan Escapes — Kashmir, Ladakh, Kerala, Goa, Rajasthan, Kedarnath and more."
+        path="/reviews"
+        image="photo-1564327287902-0ccf559d839e"
+        jsonLd={[breadcrumbs([{ name: 'Reviews', path: '/reviews' }])]}
+      />
       <PageHero eyebrow="Reviews" title="Stories from" accent="our travellers" text="Honeymooners, families, pilgrims and travel partners — here's what they say about travelling with Ivaan Escapes." image="photo-1564327287902-0ccf559d839e">
         <div className="mt-8 inline-flex items-center gap-4 rounded-2xl border border-ivory/15 bg-navy/40 px-5 py-3 backdrop-blur">
           <span className="text-gilded font-display text-5xl font-bold">{avg.toFixed(1)}</span>

@@ -99,7 +99,7 @@ export default function ChatAssistant() {
   const [loading, setLoading] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
-  const [narrow, setNarrow] = useState(() => window.matchMedia('(max-width: 639px)').matches)
+  const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches)
 
   useEffect(() => {
     const mq = window.matchMedia('(max-width: 639px)')
@@ -185,7 +185,7 @@ export default function ChatAssistant() {
                 <Sparkles className="h-3 w-3 text-gold-soft" /> AI Travel Concierge · replies instantly
               </p>
             </div>
-            <a href={GENERAL_WA} target="_blank" rel="noopener" aria-label="Continue on WhatsApp" className="grid h-9 w-9 place-items-center rounded-full bg-[#1fae55] text-white">
+            <a href={GENERAL_WA} target="_blank" rel="noopener" aria-label="Continue on WhatsApp" className="grid h-9 w-9 place-items-center rounded-full bg-wa-btn text-white">
               <WhatsAppIcon className="h-4 w-4" />
             </a>
             <button onClick={() => setChatOpen(false)} aria-label="Close assistant" className="grid h-9 w-9 place-items-center rounded-full border border-ivory/20 hover:border-gold">

@@ -1,13 +1,18 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import { Link, Navigate, useParams, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { BadgeCheck, BadgePercent, Building2, ChevronDown, Headset, Megaphone, Search, Sparkles, Users, X } from 'lucide-react'
+import { ArrowRight, BadgeCheck, BadgePercent, Building2, ChevronDown, Headset, Megaphone, Search, Sparkles, Users, X } from 'lucide-react'
 import { CHAIN_PARTNERS, HOTEL_REGIONS, LEMON_TREE, TOTAL_HOTELS, hotelCount, type HotelGroup } from '../data/hotels'
 import { cn, waLink } from '../lib/utils'
 import HotelEnquiry, { type HotelEnquiryTarget } from '../components/HotelEnquiry'
 import { Img, PageHero, Reveal, SectionHeading, WhatsAppIcon } from '../components/ui'
+import { Seo, breadcrumbs, type SeoMeta } from '../lib/seo'
 
 type Tab = (typeof HOTEL_REGIONS)[number]['id'] | 'chains'
+
+// URL slug for each tab — every region has its own indexable page.
+const slugOf = (t: Tab) => (t === 'chains' ? 'pan-india' : t)
+const tabOf = (slug?: string): Tab | null => (slug === 'pan-india' ? 'chains' : HOTEL_REGIONS.some((r) => r.id === slug) ? (slug as Tab) : null)
 
 const PERKS = [
   { icon: BadgePercent, title: 'Pre-purchased & exclusive B2B rates' },
@@ -25,7 +30,7 @@ function HotelRow({ name, onAsk }: { name: string; onAsk: () => void }) {
       <button onClick={onAsk} className="group flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-surface-2">
         <span className="h-1.5 w-1.5 shrink-0 rotate-45 bg-gold" />
         <span className="min-w-0 flex-1 text-sm font-medium leading-snug">{name}</span>
-        <span className="flex shrink-0 items-center gap-1 rounded-full border border-[#1fae55]/40 px-2.5 py-1 text-[0.68rem] font-bold text-[#1fae55] transition-colors group-hover:bg-[#1fae55] group-hover:text-white">
+        <span className="flex shrink-0 items-center gap-1 rounded-full border border-wa/40 px-2.5 py-1 text-[0.68rem] font-bold text-wa transition-colors group-hover:bg-wa-btn group-hover:text-white">
           <WhatsAppIcon className="h-3 w-3" /> Rate
         </span>
       </button>
@@ -74,21 +79,58 @@ function GroupCard({ group, region, onAsk }: { group: HotelGroup; region: string
 }
 
 export default function Hotels() {
-  const [sp, setSp] = useSearchParams()
-  const tabParam = sp.get('region')
-  const tab: Tab = tabParam === 'chains' || HOTEL_REGIONS.some((r) => r.id === tabParam) ? (tabParam as Tab) : 'goa'
+  const { region: slug } = useParams()
+  const [sp] = useSearchParams()
   const [q, setQ] = useState('')
   const [ask, setAsk] = useState<HotelEnquiryTarget | null>(null)
+  const tab = tabOf(slug)
+
+  // Old links used ?region=… — send them to the new page for that region.
+  const legacy = tabOf(sp.get('region') === 'chains' ? 'pan-india' : (sp.get('region') ?? undefined))
+  const redirect = !slug && legacy ? `/hotels/${slugOf(legacy)}` : slug && !tab ? '/hotels' : null
+
   const region = HOTEL_REGIONS.find((r) => r.id === tab)
-
-  useEffect(() => {
-    document.title = 'B2B Hotel Deals — Goa, Rajasthan, Maharashtra & Pan India | Ivaan Escapes'
-  }, [])
-
-  const setTab = (t: Tab) => {
-    setQ('')
-    setSp(t === 'goa' ? {} : { region: t }, { replace: true, preventScrollReset: true })
-  }
+  const seo: SeoMeta = region
+    ? {
+        title: `${region.name} Hotels — B2B Rates on ${hotelCount(region)} Hotels`,
+        description: `Exclusive B2B rates on ${hotelCount(region)} ${region.name} hotels & resorts — ${region.groups
+          .slice(0, 4)
+          .map((g) => g.title)
+          .join(', ')} and more. Pre-purchased rates, instant confirmation. Get the best rate on WhatsApp.`,
+        path: `/hotels/${region.id}`,
+        image: region.image,
+        jsonLd: [
+          breadcrumbs([
+            { name: 'Hotel Deals', path: '/hotels' },
+            { name: `${region.name} Hotels`, path: `/hotels/${region.id}` },
+          ]),
+          {
+            '@type': 'ItemList',
+            name: `${region.name} hotels with B2B rates`,
+            numberOfItems: hotelCount(region),
+            itemListElement: region.groups.flatMap((g) => g.hotels.map((h) => ({ g, h }))).map(({ g, h }, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              item: { '@type': 'Hotel', name: h, address: { '@type': 'PostalAddress', addressLocality: region.id === 'goa' ? 'Goa' : g.title, addressRegion: region.name, addressCountry: 'IN' } },
+            })),
+          },
+        ],
+      }
+    : tab === 'chains'
+      ? {
+          title: 'Chain Hotel Deals Across India — Taj, ITC & More',
+          description: `B2B rates on ${CHAIN_PARTNERS.length}+ hotel brands across India — Taj, ITC, The Leela, Marriott, Hilton, Hyatt, Radisson, Lemon Tree & Aurika (140+ hotels). Tell us the city and dates for our best rate.`,
+          path: '/hotels/pan-india',
+          image: 'photo-1785845506893-70768a28ba44',
+          jsonLd: [breadcrumbs([{ name: 'Hotel Deals', path: '/hotels' }, { name: 'Pan India Chains', path: '/hotels/pan-india' }])],
+        }
+      : {
+          title: 'B2B Hotel Deals — Goa, Rajasthan & Maharashtra',
+          description: `Pre-purchased & exclusive B2B hotel rates on ${TOTAL_HOTELS}+ hotels in Goa, Rajasthan & Maharashtra plus chain hotels across India. For travel agents & travellers — try our rates before booking anywhere.`,
+          path: '/hotels',
+          image: 'photo-1724947052687-e580b3010aad',
+          jsonLd: [breadcrumbs([{ name: 'Hotel Deals', path: '/hotels' }])],
+        }
 
   // Search every hotel, city and brand at once.
   const results = useMemo(() => {
@@ -109,14 +151,21 @@ export default function Hotels() {
     { id: 'chains', label: 'Pan India Chains', count: CHAIN_PARTNERS.length },
   ]
 
+  if (redirect) return <Navigate to={redirect} replace />
+
   return (
     <>
+      <Seo {...seo} />
       <PageHero
-        eyebrow="B2B Hotel Deals"
-        title="Exclusive hotel rates,"
-        accent="pan India"
-        text="Pre-purchased & exclusive B2B rates on the hotels your clients love — for travel agents, corporates and travellers. Before booking anywhere, try our rates."
-        image="photo-1724947052687-e580b3010aad"
+        eyebrow={region ? `B2B Hotel Deals · ${region.name}` : 'B2B Hotel Deals'}
+        title={region ? `${region.name} Hotels` : tab === 'chains' ? 'Pan India' : 'Exclusive hotel rates,'}
+        accent={region ? 'at B2B rates' : tab === 'chains' ? 'chain hotels' : 'pan India'}
+        text={
+          region
+            ? `${region.blurb} Tap any hotel for our best rate on WhatsApp.`
+            : 'Pre-purchased & exclusive B2B rates on the hotels your clients love — for travel agents, corporates and travellers. Before booking anywhere, try our rates.'
+        }
+        image={region?.image ?? (tab === 'chains' ? 'photo-1785845506893-70768a28ba44' : 'photo-1724947052687-e580b3010aad')}
       >
         <div className="mt-8 flex flex-wrap gap-2">
           {[`${TOTAL_HOTELS}+ hotels listed`, `${LEMON_TREE.count} Lemon Tree & Aurika hotels`, '1500+ happy agents', '24 × 7 availability'].map((t) => (
@@ -147,15 +196,17 @@ export default function Hotels() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:px-0">
               {tabs.map((t) => (
-                <button
+                <Link
                   key={t.id}
-                  onClick={() => setTab(t.id)}
+                  to={`/hotels/${slugOf(t.id)}`}
+                  preventScrollReset
+                  onClick={() => setQ('')}
                   className={cn('relative flex shrink-0 items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors', tab === t.id && !results ? 'text-navy' : 'border border-line text-muted hover:text-ink')}
                 >
                   {tab === t.id && !results && <motion.span layoutId="hotelTab" className="bg-gilded absolute inset-0 rounded-full" />}
                   <span className="relative">{t.label}</span>
                   <span className={cn('relative rounded-full px-1.5 text-[0.65rem] font-bold', tab === t.id && !results ? 'bg-navy/15' : 'bg-gold/10 text-gold')}>{t.count}</span>
-                </button>
+                </Link>
               ))}
             </div>
             <label className="relative block lg:w-80">
@@ -191,7 +242,7 @@ export default function Hotels() {
                           <span className="block text-sm font-semibold">{r.hotel}</span>
                           <span className="block text-xs text-muted">{r.place || 'Pan India chain partner'}</span>
                         </span>
-                        <span className="flex shrink-0 items-center gap-1 rounded-full border border-[#1fae55]/40 px-2.5 py-1 text-[0.68rem] font-bold text-[#1fae55] group-hover:bg-[#1fae55] group-hover:text-white">
+                        <span className="flex shrink-0 items-center gap-1 rounded-full border border-wa/40 px-2.5 py-1 text-[0.68rem] font-bold text-wa group-hover:bg-wa-btn group-hover:text-white">
                           <WhatsAppIcon className="h-3 w-3" /> Rate
                         </span>
                       </button>
@@ -207,6 +258,48 @@ export default function Hotels() {
                   </button>
                 </div>
               )}
+            </div>
+          ) : !tab ? (
+            <div className="mt-10 grid gap-6 md:grid-cols-2">
+              {HOTEL_REGIONS.map((r, k) => (
+                <Reveal key={r.id} delay={(k % 2) * 0.08}>
+                  <Link to={`/hotels/${r.id}`} className="group block h-full overflow-hidden rounded-[2rem] border border-line bg-surface transition-colors hover:border-gold/50">
+                    <div className="relative h-48 overflow-hidden">
+                      <Img id={r.image} alt={`${r.name} hotels`} w={900} sizes="(max-width:768px) 100vw, 50vw" className="h-full w-full object-cover transition-transform duration-[1.2s] group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy/90 to-transparent" />
+                      <div className="absolute inset-x-6 bottom-5 flex items-end justify-between text-ivory">
+                        <h2 className="font-display text-3xl font-semibold leading-none">{r.name} Hotels</h2>
+                        <span className="text-gilded font-display text-3xl font-bold leading-none">{hotelCount(r)}</span>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <p className="text-sm text-muted">{r.blurb}</p>
+                      <p className="mt-4 text-sm font-medium leading-relaxed">
+                        {r.groups
+                          .flatMap((g) => g.hotels)
+                          .slice(0, 6)
+                          .join(' · ')}{' '}
+                        …
+                      </p>
+                      <p className="mt-5 flex items-center gap-2 text-sm font-semibold text-gold">
+                        View all {hotelCount(r)} {r.name} hotels <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </p>
+                    </div>
+                  </Link>
+                </Reveal>
+              ))}
+              <Reveal delay={0.08}>
+                <Link to="/hotels/pan-india" className="group flex h-full flex-col justify-between overflow-hidden rounded-[2rem] border border-line bg-surface p-6 transition-colors hover:border-gold/50">
+                  <div>
+                    <p className="eyebrow">Rest of India</p>
+                    <h2 className="mt-3 font-display text-3xl font-semibold">Pan India chain hotels</h2>
+                    <p className="mt-3 text-sm leading-relaxed text-muted">{CHAIN_PARTNERS.slice(0, 14).join(' · ')} and more.</p>
+                  </div>
+                  <p className="mt-6 flex items-center gap-2 text-sm font-semibold text-gold">
+                    See all {CHAIN_PARTNERS.length} partner brands <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </p>
+                </Link>
+              </Reveal>
             </div>
           ) : region ? (
             <AnimatePresence mode="wait">

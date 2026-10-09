@@ -1,20 +1,33 @@
-import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import { BLOGS } from '../data/blogs'
 import { Img, PageHero, Reveal } from '../components/ui'
+import { ORG_ID, Seo, absUrl, breadcrumbs } from '../lib/seo'
 
 export const fmtDate = (d: string) => new Date(d + 'T00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
 export default function Blog() {
   const [lead, ...rest] = BLOGS
 
-  useEffect(() => {
-    document.title = 'Travel Journal — Ivaan Escapes'
-  }, [])
 
   return (
     <>
+      <Seo
+        title="Travel Blog — India Travel Guides & Tips"
+        description="Practical India travel guides from our experts — best time to visit Ladakh, Kerala houseboats, Goa North vs South, Spiti road trips, Kedarnath Yatra and weekend getaways from Mumbai."
+        path="/blog"
+        image="photo-1652514284048-a297d43ab05d"
+        jsonLd={[
+          breadcrumbs([{ name: 'Blog', path: '/blog' }]),
+          {
+            '@type': 'Blog',
+            name: 'Ivaan Escapes Travel Journal',
+            url: absUrl('/blog'),
+            publisher: { '@id': ORG_ID },
+            blogPost: BLOGS.map((b) => ({ '@type': 'BlogPosting', headline: b.title, url: absUrl(`/blog/${b.slug}`), datePublished: b.date })),
+          },
+        ]}
+      />
       <PageHero eyebrow="Travel Journal" title="Guides, tips &" accent="wanderlust" text="Practical advice from our travel experts to help you plan smarter and travel better." image="photo-1652514284048-a297d43ab05d" />
 
       <section className="py-20 sm:py-28">

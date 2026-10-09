@@ -467,7 +467,7 @@ export const CHAIN_PARTNERS: string[] = [
   'Sarovar',
   'Fortune',
   'Club Mahindra',
-  'Sterling Holidays',
+  'Sterling',
   'Ramada by Wyndham',
   'Country Inn & Suites',
   'Grand Continent',

@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { motion, useScroll } from 'framer-motion'
 import { ArrowLeft, ArrowRight, Clock } from 'lucide-react'
@@ -7,22 +6,47 @@ import { getPackage } from '../data/packages'
 import { inr } from '../lib/utils'
 import { Img, PageHero } from '../components/ui'
 import { fmtDate } from './Blog'
+import { ORG_ID, Seo, absUrl, breadcrumbs } from '../lib/seo'
 
 export default function BlogPost() {
   const { slug = '' } = useParams()
   const b = getBlog(slug)
   const { scrollYProgress } = useScroll()
 
-  useEffect(() => {
-    if (b) document.title = `${b.title} — Ivaan Escapes`
-  }, [b])
-
   if (!b) return <Navigate to="/blog" replace />
   const pkg = b.related ? getPackage(b.related) : undefined
   const more = BLOGS.filter((x) => x.slug !== b.slug).slice(0, 2)
 
+  const path = `/blog/${b.slug}`
   return (
     <>
+      <Seo
+        title={b.title}
+        description={b.excerpt}
+        path={path}
+        image={b.cover}
+        type="article"
+        publishedTime={b.date}
+        jsonLd={[
+          breadcrumbs([
+            { name: 'Blog', path: '/blog' },
+            { name: b.title, path },
+          ]),
+          {
+            '@type': 'BlogPosting',
+            headline: b.title,
+            description: b.excerpt,
+            image: `https://images.unsplash.com/${b.cover}?auto=format&fit=crop&w=1200&q=75`,
+            datePublished: b.date,
+            dateModified: b.date,
+            articleSection: b.category,
+            wordCount: b.sections.flatMap((s) => s.body).join(' ').split(/\s+/).length,
+            author: { '@type': 'Organization', name: 'Ivaan Escapes Travel Team', url: absUrl('/') },
+            publisher: { '@id': ORG_ID },
+            mainEntityOfPage: absUrl(path),
+          },
+        ]}
+      />
       <motion.div style={{ scaleX: scrollYProgress }} className="bg-gilded fixed inset-x-0 top-0 z-[55] h-1 origin-left" />
       <PageHero eyebrow={b.category} title={b.title} image={b.cover}>
         <p className="mt-6 flex items-center gap-3 text-sm text-ivory/70">

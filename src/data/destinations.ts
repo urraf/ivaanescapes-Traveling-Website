@@ -88,8 +88,8 @@ export const DESTINATIONS: Destination[] = [
     image: 'photo-1661924326425-c14a6426d989',
   },
   {
-    slug: 'mumbai',
-    name: 'Mumbai & Maharashtra',
+    slug: 'maharashtra',
+    name: 'Maharashtra',
     location: 'Maharashtra',
     group: 'coast',
     tagline: 'City of Dreams & Sahyadri Hills',

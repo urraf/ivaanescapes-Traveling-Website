@@ -1,21 +1,39 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { RouterProvider } from 'react-router-dom'
+import { createRoot, hydrateRoot } from 'react-dom/client'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { MotionConfig } from 'framer-motion'
 import { UIProvider } from './context/ui'
-import { router } from './App'
+import { routes } from './App'
 import { session } from './lib/utils'
 import './index.css'
 
-createRoot(document.getElementById('root')!).render(
+const router = createBrowserRouter(routes)
+const container = document.getElementById('root')!
+const app = (
   <StrictMode>
     <UIProvider>
       <MotionConfig reducedMotion="user">
         <RouterProvider router={router} />
       </MotionConfig>
     </UIProvider>
-  </StrictMode>,
+  </StrictMode>
 )
+
+// Production pages arrive pre-rendered (see scripts/prerender.mjs): attach to that HTML instead of
+// rebuilding it, so the content painted on first load stays put. Wait until the page's code-split
+// module has loaded, otherwise the first render would be the loading fallback, not the page.
+function start() {
+  if (container.firstElementChild) hydrateRoot(container, app)
+  else createRoot(container).render(app)
+}
+if (router.state.initialized) start()
+else {
+  const stop = router.subscribe((state) => {
+    if (!state.initialized) return
+    stop()
+    start()
+  })
+}
 
 // A newer deploy replaced the code-split files this tab expects: reload once to pick up the new version.
 window.addEventListener('vite:preloadError', (e) => {

@@ -112,7 +112,7 @@ export const BLOGS: Blog[] = [
       { heading: 'Mahabaleshwar & Panchgani (≈ 5 hrs)', body: ['Strawberry farms, Venna Lake and sweeping valley views. Le Méridien, Courtyard by Marriott and Taj Fountain are popular picks.'] },
       { heading: 'Igatpuri (≈ 3 hrs)', body: ['Quiet green hills, waterfalls and wellness resorts such as Tropical Retreat and Regenta — ideal for a slow weekend.'] },
       { heading: 'Alibaug & Nashik', body: ['Alibaug offers a beach break (Taj Alibaug), while Nashik is perfect for vineyard stays and wine tours.'] },
-      { heading: 'Plan It With Us', body: ['We hold B2B deals on 70+ hotels across Mumbai and Maharashtra, including airport hotels for transit stays. Message us on WhatsApp for the best rate before you book anywhere.'] },
+      { heading: 'Plan It With Us', body: ['We hold B2B deals on 70+ hotels across Maharashtra, including Mumbai airport hotels for transit stays. Message us on WhatsApp for the best rate before you book anywhere.'] },
     ],
   },
 ]

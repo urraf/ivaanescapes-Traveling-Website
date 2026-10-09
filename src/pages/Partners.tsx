@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BadgePercent, Clock4, FileText, Headset, Layers, ShieldCheck } from 'lucide-react'
 import { DESTINATIONS } from '../data/destinations'
 import { REVIEWS } from '../data/reviews'
 import { img, waLink } from '../lib/utils'
 import { PageHero, Reveal, SectionHeading, Stars, WhatsAppIcon } from '../components/ui'
+import { ORG_ID, Seo, breadcrumbs } from '../lib/seo'
 
 const BENEFITS = [
   { icon: BadgePercent, title: 'Exclusive net rates', text: 'Contracted hotel and transport rates that leave you healthy margins on every booking.' },
@@ -25,9 +26,6 @@ export default function Partners() {
   const [f, setF] = useState({ agency: '', name: '', city: '', phone: '', volume: '' })
   const partners = REVIEWS.filter((r) => r.kind === 'partner')
 
-  useEffect(() => {
-    document.title = 'Partner With Us (B2B) — Ivaan Escapes'
-  }, [])
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -51,6 +49,23 @@ export default function Partners() {
 
   return (
     <>
+      <Seo
+        title="B2B Travel Partner Program for Travel Agents"
+        description="Join 1500+ travel agents working with Ivaan Escapes — exclusive net hotel rates, white-label itineraries, quotes in under 2 hours, DMC support and instant confirmation across India."
+        path="/partners"
+        image="photo-1603202662747-00e33e7d1468"
+        jsonLd={[
+          breadcrumbs([{ name: 'Partners', path: '/partners' }]),
+          {
+            '@type': 'Service',
+            name: 'B2B travel & hotel services for travel agents',
+            serviceType: 'Destination management & B2B hotel booking',
+            provider: { '@id': ORG_ID },
+            areaServed: { '@type': 'Country', name: 'India' },
+            audience: { '@type': 'BusinessAudience', audienceType: 'Travel agents, tour operators & corporates' },
+          },
+        ]}
+      />
       <PageHero
         eyebrow="B2B Partnerships"
         title="Your trusted"

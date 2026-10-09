@@ -30,7 +30,7 @@ export const YoutubeIcon = (p: SVGProps<SVGSVGElement>) => (
 /* ---------- Logo ---------- */
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link to="/" className={cn('group flex min-w-0 items-center gap-2 min-[380px]:gap-2.5', className)} aria-label="Ivaan Escapes home">
+    <Link to="/" className={cn('group flex min-w-0 items-center gap-2 min-[380px]:gap-2.5', className)}>
       <img src="/logo-mark.webp" alt="" width={240} height={151} className="h-8 w-auto shrink-0 transition-transform duration-500 group-hover:rotate-[-8deg] min-[380px]:h-9 sm:h-10" />
       <span className="flex flex-col leading-none">
         <span className="text-gilded whitespace-nowrap font-cinzel text-[0.92rem] font-bold tracking-[0.06em] min-[380px]:text-[1.05rem] min-[380px]:tracking-[0.08em] sm:text-lg">
@@ -168,7 +168,7 @@ export function PageHero({
 
 export function Stars({ n, className }: { n: number; className?: string }) {
   return (
-    <span className={cn('inline-flex gap-0.5 text-gold', className)} aria-label={`${n} out of 5 stars`}>
+    <span role="img" className={cn('inline-flex gap-0.5 text-gold', className)} aria-label={`${n} out of 5 stars`}>
       {Array.from({ length: 5 }, (_, i) => (
         <svg key={i} viewBox="0 0 20 20" className={cn('h-3.5 w-3.5', i >= n && 'opacity-25')} fill="currentColor" aria-hidden>
           <path d="M10 1.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L10 14.9l-5.2 2.8 1-5.9L1.5 7.7l5.9-.8z" />

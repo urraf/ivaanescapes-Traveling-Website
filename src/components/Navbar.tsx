@@ -19,8 +19,8 @@ const LINKS = [
 ]
 
 const HOTEL_LINKS = [
-  ...HOTEL_REGIONS.map((r) => ({ to: r.id === 'goa' ? '/hotels' : `/hotels?region=${r.id}`, label: `${r.name} Hotels`, sub: `${hotelCount(r)} hotels & resorts`, image: r.image })),
-  { to: '/hotels?region=chains', label: 'Pan India Chains', sub: `Taj, ITC, Marriott & more · ${LEMON_TREE.count} Lemon Tree`, image: 'photo-1785845506893-70768a28ba44' },
+  ...HOTEL_REGIONS.map((r) => ({ to: `/hotels/${r.id}`, label: `${r.name} Hotels`, sub: `${hotelCount(r)} hotels & resorts`, image: r.image })),
+  { to: '/hotels/pan-india', label: 'Pan India Chains', sub: `Taj, ITC, Marriott & more · ${LEMON_TREE.count} Lemon Tree`, image: 'photo-1785845506893-70768a28ba44' },
 ]
 
 function ThemeToggle({ className }: { className?: string }) {

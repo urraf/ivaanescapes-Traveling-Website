@@ -29,7 +29,7 @@ export default function FloatingActions() {
   }, [pathname])
 
   const actions = [
-    { label: 'Chat on WhatsApp', href: GENERAL_WA, icon: WhatsAppIcon, cls: 'bg-[#1fae55] text-white', external: true },
+    { label: 'Chat on WhatsApp', href: GENERAL_WA, icon: WhatsAppIcon, cls: 'bg-wa-btn text-white', external: true },
     { label: 'Call us now', href: telLink, icon: Phone, cls: 'bg-ivory text-navy' },
     { label: 'Ask AI Travel Assistant', onClick: () => openChat(), icon: Sparkles, cls: 'bg-gilded text-navy' },
   ]

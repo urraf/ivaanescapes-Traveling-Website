@@ -31,6 +31,7 @@ import { cn, img, inr, srcSet, waLink } from '../lib/utils'
 import PackageCard from '../components/PackageCard'
 import BoardingPassCTA from '../components/BoardingPassCTA'
 import { Img, Reveal, SectionHeading, Stars, WhatsAppIcon } from '../components/ui'
+import { Seo, absUrl } from '../lib/seo'
 
 const HERO_SLIDES = ['ladakh', 'kashmir', 'kerala', 'goa', 'rajasthan'].map((s) => getDestination(s)!)
 
@@ -93,11 +94,12 @@ function Hero() {
       </svg>
 
       <motion.div style={{ opacity: fade }} className="container-x relative flex flex-1 flex-col justify-center pb-40 pt-32 sm:pb-44">
-        <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }} className="eyebrow flex items-center gap-3 !text-gold-soft">
-          <span className="h-px w-10 bg-gold-soft/70" /> Premium Holidays · B2B Travel Experts
-        </motion.p>
+        {/* The keyword-rich H1 for search engines; the big tagline below is styled text. */}
+        <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.8 }} className="eyebrow flex items-center gap-3 !text-gold-soft">
+          <span className="h-px w-10 shrink-0 bg-gold-soft/70" /> India Tour Packages & B2B Hotel Deals
+        </motion.h1>
 
-        <h1 className="mt-6 font-display font-semibold leading-[0.85]">
+        <p className="mt-6 font-display font-semibold leading-[0.85]">
           <span className="sr-only">Escape the Ordinary</span>
           <span aria-hidden className="flex overflow-hidden text-[clamp(4.5rem,15vw,11rem)]">
             {word.split('').map((c, k) => (
@@ -115,7 +117,7 @@ function Hero() {
           >
             the Ordinary
           </motion.span>
-        </h1>
+        </p>
 
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.3, duration: 0.8 }} className="mt-6 max-w-lg text-base leading-relaxed text-ivory/80 sm:text-lg">
           Handcrafted India holidays — Kashmir, Ladakh, Himachal, Uttarakhand, Goa, Rajasthan, Mumbai and Kerala — with exclusive hotel deals, planned by experts and confirmed in one WhatsApp message.
@@ -377,19 +379,19 @@ function Featured() {
 
 /* ---------------- B2B hotel deals (from the "6 Destinations · 1 Solution" flyer) ---------------- */
 const DEAL_DESTINATIONS = [
-  { name: 'Goa', image: 'photo-1614082242765-7c98ca0f3df3', tag: 'Special exclusive deal', to: '/hotels' },
-  { name: 'Uttarakhand', image: 'photo-1719581827279-e9a8d8fce924', tag: 'Special exclusive deal', to: '/packages?dest=uttarakhand' },
-  { name: 'Kashmir', image: 'photo-1564327287902-0ccf559d839e', tag: 'Best deal', to: '/packages/kashmir-paradise-on-earth' },
-  { name: 'Rajasthan', image: 'photo-1599661046827-dacff0c0f09a', tag: 'Best deal', to: '/hotels?region=rajasthan' },
-  { name: 'Mumbai', image: 'photo-1598434192043-71111c1b3f41', tag: 'Best deal', to: '/hotels?region=maharashtra' },
-  { name: 'Kerala', image: 'photo-1506461883276-594a12b11cf3', tag: 'Best deal', to: '/packages/kerala-backwaters-and-hills' },
+  { name: 'Goa', image: 'photo-1614082242765-7c98ca0f3df3', tag: 'Special exclusive deal', to: '/destinations/goa' },
+  { name: 'Uttarakhand', image: 'photo-1719581827279-e9a8d8fce924', tag: 'Special exclusive deal', to: '/destinations/uttarakhand' },
+  { name: 'Kashmir', image: 'photo-1564327287902-0ccf559d839e', tag: 'Best deal', to: '/destinations/kashmir' },
+  { name: 'Rajasthan', image: 'photo-1599661046827-dacff0c0f09a', tag: 'Best deal', to: '/destinations/rajasthan' },
+  { name: 'Mumbai', image: 'photo-1598434192043-71111c1b3f41', tag: 'Best deal', to: '/destinations/maharashtra' },
+  { name: 'Kerala', image: 'photo-1506461883276-594a12b11cf3', tag: 'Best deal', to: '/destinations/kerala' },
 ]
 
 function HotelDeals() {
   return (
     <section className="py-24 sm:py-32">
       <div className="container-x">
-        <SectionHeading center eyebrow="B2B Hotel Deals" title="6 destinations," accent="1 solution" text="Special exclusive deals in Goa & Uttarakhand, best deals in Kashmir, Rajasthan, Mumbai & Kerala — and chain hotels across the rest of India." />
+        <SectionHeading center eyebrow="B2B Hotel Deals" title="6 Destinations," accent="1 Solution" text="Special exclusive deals in Goa & Uttarakhand, best deals in Kashmir, Rajasthan, Mumbai & Kerala — and chain hotels across the rest of India." />
         <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
           {DEAL_DESTINATIONS.map((d, k) => (
             <Reveal key={d.name} delay={k * 0.06}>
@@ -543,7 +545,7 @@ function WhyUs() {
                 <textPath href="#circle">ESCAPE THE ORDINARY ✦ IVAAN ESCAPES ✦</textPath>
               </text>
             </svg>
-            <img src="/logo-mark.webp" alt="" className="h-12 w-auto" />
+            <img src="/logo-mark.webp" alt="" width={240} height={151} className="h-12 w-auto" />
           </div>
         </div>
 
@@ -684,11 +686,20 @@ function BlogTeaser() {
 }
 
 export default function Home() {
-  useEffect(() => {
-    document.title = 'Ivaan Escapes — Escape the Ordinary | India Holiday Packages & B2B Hotel Deals'
-  }, [])
   return (
     <>
+      <Seo
+        title="India Tour Packages & B2B Hotel Deals"
+        description="Ivaan Escapes — trusted B2B travel company & DMC in New Delhi. Tour packages for Kashmir, Ladakh, Himachal, Uttarakhand, Goa, Kerala, Rajasthan & Mumbai, plus exclusive hotel deals."
+        path="/"
+        jsonLd={[
+          {
+            '@type': 'ItemList',
+            name: 'Popular India tour packages',
+            itemListElement: PACKAGES.filter((p) => p.popular).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: absUrl(`/packages/${p.slug}`), name: p.title })),
+          },
+        ]}
+      />
       <Hero />
       <JourneyFinder />
       <div className="mt-16">

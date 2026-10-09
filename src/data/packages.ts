@@ -4,6 +4,8 @@ export type Package = {
   slug: string
   destination: string
   title: string
+  /** Search keyword used in the page title, e.g. "Kashmir Tour Package". */
+  keyword: string
   subtitle: string
   nights: number
   days: number
@@ -43,6 +45,7 @@ export const PACKAGES: Package[] = [
     slug: 'kashmir-paradise-on-earth',
     destination: 'kashmir',
     title: 'Kashmir — Paradise on Earth',
+    keyword: 'Kashmir Tour Package',
     subtitle: 'Shikaras, meadows & snow peaks in one unforgettable loop',
     nights: 5,
     days: 6,
@@ -80,6 +83,7 @@ export const PACKAGES: Package[] = [
     slug: 'ladakh-land-of-high-passes',
     destination: 'ladakh',
     title: 'Leh Ladakh — Land of High Passes',
+    keyword: 'Leh Ladakh Tour Package',
     subtitle: 'Khardung La, Nubra dunes & the blues of Pangong Tso',
     nights: 6,
     days: 7,
@@ -119,6 +123,7 @@ export const PACKAGES: Package[] = [
     slug: 'manali-snow-and-solang',
     destination: 'himachal',
     title: 'Himachal — Manali, Solang & Atal Tunnel',
+    keyword: 'Manali Tour Package',
     subtitle: 'Pine forests, paragliding and cosy mountain cafés',
     nights: 4,
     days: 5,
@@ -155,6 +160,7 @@ export const PACKAGES: Package[] = [
     slug: 'spiti-valley-circuit',
     destination: 'himachal',
     title: 'Spiti Valley — The Great Circuit',
+    keyword: 'Spiti Valley Tour Package',
     subtitle: 'Kinnaur to Chandratal through a cold desert of monasteries',
     nights: 7,
     days: 8,
@@ -193,6 +199,7 @@ export const PACKAGES: Package[] = [
     slug: 'kedarnath-yatra',
     destination: 'uttarakhand',
     title: 'Kedarnath Yatra with Rishikesh',
+    keyword: 'Kedarnath Yatra Package',
     subtitle: 'A soulful journey to the abode of Lord Shiva',
     nights: 4,
     days: 5,
@@ -228,6 +235,7 @@ export const PACKAGES: Package[] = [
     slug: 'rishikesh-mussoorie-hills',
     destination: 'uttarakhand',
     title: 'Uttarakhand — Rishikesh & Mussoorie',
+    keyword: 'Rishikesh & Mussoorie Tour Package',
     subtitle: 'Ganga aarti, river rafting and the Queen of the Hills',
     nights: 4,
     days: 5,
@@ -262,8 +270,9 @@ export const PACKAGES: Package[] = [
   },
   {
     slug: 'mumbai-lonavala-mahabaleshwar',
-    destination: 'mumbai',
+    destination: 'maharashtra',
     title: 'Mumbai, Lonavala & Mahabaleshwar',
+    keyword: 'Mumbai, Lonavala & Mahabaleshwar Tour',
     subtitle: 'The city of dreams, then misty Sahyadri hill stations',
     nights: 5,
     days: 6,
@@ -301,6 +310,7 @@ export const PACKAGES: Package[] = [
     slug: 'kerala-backwaters-and-hills',
     destination: 'kerala',
     title: "Kerala — God's Own Country",
+    keyword: 'Kerala Tour Package',
     subtitle: 'Tea hills, spice trails and a night on the backwaters',
     nights: 5,
     days: 6,
@@ -339,6 +349,7 @@ export const PACKAGES: Package[] = [
     slug: 'goa-beach-escape',
     destination: 'goa',
     title: 'Goa — Beach & Fiesta Escape',
+    keyword: 'Goa Tour Package',
     subtitle: 'Sunsets, shacks, forts and Portuguese heritage',
     nights: 3,
     days: 4,
@@ -376,6 +387,7 @@ export const PACKAGES: Package[] = [
     slug: 'royal-rajasthan',
     destination: 'rajasthan',
     title: 'Royal Rajasthan',
+    keyword: 'Rajasthan Tour Package',
     subtitle: 'Forts, palaces and a night under desert stars',
     nights: 6,
     days: 7,
@@ -415,14 +427,14 @@ export const PACKAGES: Package[] = [
 export const getPackage = (slug: string) => PACKAGES.find((p) => p.slug === slug)
 export const packagesFor = (dest: string) => PACKAGES.filter((p) => p.destination === dest)
 
-/** Where a destination links to, plus a short summary — one package opens directly, several open the filtered list. */
+/** A destination's landing page link plus a short summary ("5N/6D" or "2 journeys") and starting price. */
 export const destInfo = (dest: string) => {
   const list = packagesFor(dest)
   const one = list.length === 1 ? list[0] : undefined
   return {
     count: list.length,
     from: list.length ? Math.min(...list.map((p) => p.priceFrom)) : 0,
-    link: one ? `/packages/${one.slug}` : `/packages?dest=${dest}`,
+    link: `/destinations/${dest}`,
     label: one ? `${one.nights}N/${one.days}D` : `${list.length} journeys`,
   }
 }

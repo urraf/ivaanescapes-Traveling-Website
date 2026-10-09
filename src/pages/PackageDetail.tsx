@@ -6,6 +6,7 @@ import { getPackage, PACKAGES } from '../data/packages'
 import { getDestination } from '../data/destinations'
 import { cn, img, inr } from '../lib/utils'
 import { useScrollLock } from '../lib/hooks'
+import { ORG_ID, Seo, absUrl, breadcrumbs } from '../lib/seo'
 import BookingPanel from '../components/BookingPanel'
 import PackageCard from '../components/PackageCard'
 import { Img, Reveal, WhatsAppIcon } from '../components/ui'
@@ -24,10 +25,6 @@ function PackageDetail({ slug }: { slug: string }) {
   const { scrollY } = useScroll()
   const heroY = useTransform(scrollY, [0, 600], [0, 150])
 
-  useEffect(() => {
-    if (p) document.title = `${p.title} · ${p.nights}N/${p.days}D — Ivaan Escapes`
-  }, [p])
-
   useScrollLock(sheet || !!lightbox)
 
   useEffect(() => {
@@ -42,8 +39,45 @@ function PackageDetail({ slug }: { slug: string }) {
   const similar = PACKAGES.filter((x) => x.slug !== p.slug && x.themes.some((t) => p.themes.includes(t))).slice(0, 3)
   const photos = [p.cover, ...p.gallery]
 
+  const path = `/packages/${p.slug}`
   return (
     <>
+      <Seo
+        title={`${p.keyword} ${p.nights}N/${p.days}D from ${inr(p.priceFrom)}`}
+        description={`${p.subtitle}. ${p.nights} nights / ${p.days} days: ${p.route}. Hotels, transfers & sightseeing included — from ${inr(p.priceFrom)} per person. Book on WhatsApp.`}
+        path={path}
+        image={p.cover}
+        jsonLd={[
+          breadcrumbs([
+            { name: 'Destinations', path: '/destinations' },
+            { name: d?.name ?? 'Packages', path: `/destinations/${p.destination}` },
+            { name: p.title, path },
+          ]),
+          {
+            '@type': 'TouristTrip',
+            name: p.title,
+            description: `${p.subtitle}. ${p.highlights.join('. ')}.`,
+            url: absUrl(path),
+            image: [p.cover, ...p.gallery].map((id) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1200&q=75`),
+            touristType: p.themes,
+            provider: { '@id': ORG_ID },
+            itinerary: {
+              '@type': 'ItemList',
+              numberOfItems: p.itinerary.length,
+              itemListElement: p.itinerary.map((day, i) => ({ '@type': 'ListItem', position: i + 1, name: `Day ${i + 1}: ${day.title}`, description: day.desc })),
+            },
+            offers: {
+              '@type': 'Offer',
+              price: p.priceFrom,
+              priceCurrency: 'INR',
+              availability: 'https://schema.org/InStock',
+              url: absUrl(path),
+              description: 'Starting price per person on twin sharing with standard hotels',
+              seller: { '@id': ORG_ID },
+            },
+          },
+        ]}
+      />
       {/* Hero */}
       <section className="grain relative isolate flex min-h-[78svh] items-end overflow-hidden bg-navy pb-14 pt-32 text-ivory">
         <motion.div style={{ y: heroY }} className="absolute inset-0 -z-10">
@@ -55,9 +89,11 @@ function PackageDetail({ slug }: { slug: string }) {
             <nav className="flex flex-wrap items-center gap-1.5 text-xs text-ivory/70" aria-label="Breadcrumb">
               <Link to="/" className="hover:text-gold-soft">Home</Link>
               <ChevronRight className="h-3 w-3" />
-              <Link to="/packages" className="hover:text-gold-soft">Packages</Link>
+              <Link to="/destinations" className="hover:text-gold-soft">Destinations</Link>
               <ChevronRight className="h-3 w-3" />
-              <span className="text-ivory">{d?.name}</span>
+              <Link to={`/destinations/${p.destination}`} className="hover:text-gold-soft">{d?.name}</Link>
+              <ChevronRight className="h-3 w-3" />
+              <span className="text-ivory">{p.keyword}</span>
             </nav>
             <p className="mt-6 font-script text-3xl text-gold-soft sm:text-4xl">{d?.tagline}</p>
             <h1 className="max-w-4xl font-display text-5xl font-semibold leading-[0.95] sm:text-7xl">{p.title}</h1>

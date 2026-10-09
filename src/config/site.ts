@@ -13,11 +13,14 @@ export const SITE = {
     { name: 'Sahil', phone: '+918586892228', display: '+91 85868 92228' },
     { name: 'Riya', phone: '+918384053818', display: '+91 83840 53818' },
     { name: 'Chitranshi', phone: '+918800586668', display: '+91 88005 86668' },
-    { name: 'Ivaan', phone: '+918860996633', display: '+91 88609 96633' },
+    { name: 'Sejal', phone: '+918860996633', display: '+91 88609 96633' },
   ],
   email: 'sales@ivaanescapes.com',
-  website: 'www.ivaanescapes.com',
-  url: 'https://www.ivaanescapes.com',
+  website: 'ivaanescapes.com',
+  // Canonical origin used for SEO (canonical URLs, sitemap, structured data). No trailing slash.
+  url: 'https://ivaanescapes.com',
+  // Paste the content value from Google Search Console's "HTML tag" verification (optional — DNS verification also works).
+  googleVerification: '',
   gst: '07ATLPV2446B2ZL',
   address: {
     line1: 'N-60, Nirmal Puri',
